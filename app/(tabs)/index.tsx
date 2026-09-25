@@ -3,13 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView } fr
 import { useRouter } from 'expo-router';
 import { 
   Bell, 
-  MapPin, 
-  MessageSquare, 
-  FileCheck2, 
-  FolderLock, 
-  Building2, 
   ChevronRight, 
-  ShieldCheck,
   Search,
   ArrowRight,
   Settings
@@ -55,15 +49,13 @@ export default function HomeScreen() {
         {/* 2. Unified Context Card (Spacious, Elegant, Light) */}
         <View style={styles.contextCard}>
           <View style={styles.locationRow}>
-            <MapPin size={14} color="#0D9488" />
-            <Text style={styles.locationText}>Chennai, Tamil Nadu • Regional Desk</Text>
+            <Text style={styles.locationText}>Chennai, Tamil Nadu · Regional Desk</Text>
           </View>
           
           <Text style={styles.sectorTitle}>Two-Wheeler Helmets & Stainless Flasks</Text>
           
           <View style={styles.metricsPillsRow}>
             <View style={styles.pillMandatory}>
-              <View style={styles.pillDotAmber} />
               <Text style={styles.pillMandatoryText}>QCO Mandatory</Text>
             </View>
 
@@ -79,16 +71,7 @@ export default function HomeScreen() {
           onPress={() => router.push('/ask')}
           activeOpacity={0.9}
         >
-          <View style={styles.heroTop}>
-            <View style={styles.heroIconBox}>
-              <MessageSquare size={20} color="#2DD4BF" />
-            </View>
-            <View style={styles.askTag}>
-              <Text style={styles.askTagText}>AI ASSISTANT</Text>
-            </View>
-          </View>
-
-          <Text style={styles.heroHeading}>Ask Praman Anything</Text>
+          <Text style={styles.heroHeading}>Ask Praman Assistant</Text>
           <Text style={styles.heroSubheading}>
             Plain-language Q&A for Indian Standards, ISI mark licensing, and NABL testing labs.
           </Text>
@@ -113,9 +96,6 @@ export default function HomeScreen() {
               onPress={() => router.push('/standards')}
               activeOpacity={0.8}
             >
-              <View style={[styles.cardIconCircle, { backgroundColor: '#F0FDFA' }]}>
-                <FileCheck2 size={20} color="#0D9488" />
-              </View>
               <Text style={styles.cardMainTitle}>QCO Checker</Text>
               <Text style={styles.cardSubtitle}>Check mandatory standards</Text>
               <ChevronRight size={16} color="#CBD5E1" style={styles.chevronPos} />
@@ -127,9 +107,6 @@ export default function HomeScreen() {
               onPress={() => router.push('/vault')}
               activeOpacity={0.8}
             >
-              <View style={[styles.cardIconCircle, { backgroundColor: '#EEF2FF' }]}>
-                <FolderLock size={20} color="#4338CA" />
-              </View>
               <Text style={styles.cardMainTitle}>Document Vault</Text>
               <Text style={styles.cardSubtitle}>3 verified certificates</Text>
               <ChevronRight size={16} color="#CBD5E1" style={styles.chevronPos} />
@@ -141,9 +118,6 @@ export default function HomeScreen() {
               onPress={() => router.push('/map')}
               activeOpacity={0.8}
             >
-              <View style={[styles.cardIconCircle, { backgroundColor: '#ECFDF5' }]}>
-                <Building2 size={20} color="#059669" />
-              </View>
               <Text style={styles.cardMainTitle}>Find a Lab</Text>
               <Text style={styles.cardSubtitle}>NABL accredited near you</Text>
               <ChevronRight size={16} color="#CBD5E1" style={styles.chevronPos} />
@@ -151,7 +125,7 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* 5. Today's Brief (Just 2 clean cards with breathing space) */}
+        {/* 5. Today's BIS Brief (Just 2 clean cards with breathing space) */}
         <View style={styles.briefSection}>
           <View style={styles.briefHeaderRow}>
             <Text style={styles.sectionHeader}>Today's BIS Brief</Text>
@@ -161,9 +135,6 @@ export default function HomeScreen() {
           <View style={styles.briefList}>
             {TODAYS_BRIEF.slice(0, 2).map((item) => (
               <View key={item.id} style={styles.briefCard}>
-                <View style={styles.briefIconBox}>
-                  <ShieldCheck size={18} color="#312E81" />
-                </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.briefTitle}>{item.title}</Text>
                   <Text style={styles.briefDesc}>{item.description}</Text>

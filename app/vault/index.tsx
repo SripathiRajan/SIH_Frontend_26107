@@ -2,13 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { 
-  FolderLock, 
-  UploadCloud, 
-  CheckCircle2, 
-  ArrowLeft, 
-  FileText, 
-  Download, 
-  Bot 
+  ArrowLeft
 } from 'lucide-react-native';
 import { VAULT_DOCS } from '../../services/mockData';
 
@@ -29,11 +23,8 @@ export default function VaultScreen() {
         
         {/* Upload Card */}
         <TouchableOpacity style={styles.uploadCard} activeOpacity={0.8}>
-          <View style={styles.uploadIconBox}>
-            <UploadCloud size={24} color="#0D9488" />
-          </View>
           <Text style={styles.uploadTitle}>Upload Certificate or Test Report</Text>
-          <Text style={styles.uploadSub}>PDF, JPG or PNG up to 15MB • Instant OCR extraction</Text>
+          <Text style={styles.uploadSub}>PDF, JPG or PNG up to 15MB · Instant OCR extraction</Text>
           <View style={styles.ocrBadge}>
             <Text style={styles.ocrBadgeText}>Legal Hash Verification Active</Text>
           </View>
@@ -51,7 +42,6 @@ export default function VaultScreen() {
                   <Text style={styles.catPillText}>{doc.category}</Text>
                 </View>
                 <View style={styles.verifiedPill}>
-                  <CheckCircle2 size={12} color="#0D9488" />
                   <Text style={styles.verifiedText}>{doc.status}</Text>
                 </View>
               </View>
@@ -67,7 +57,6 @@ export default function VaultScreen() {
 
               <View style={styles.actionRow}>
                 <TouchableOpacity style={styles.receiptBtn}>
-                  <Download size={13} color="#4B5563" />
                   <Text style={styles.receiptText}>Receipt</Text>
                 </TouchableOpacity>
 
@@ -75,7 +64,6 @@ export default function VaultScreen() {
                   style={styles.askBtn}
                   onPress={() => router.push('/(tabs)/ask')}
                 >
-                  <Bot size={13} color="#312E81" />
                   <Text style={styles.askBtnText}>Ask AI</Text>
                 </TouchableOpacity>
               </View>

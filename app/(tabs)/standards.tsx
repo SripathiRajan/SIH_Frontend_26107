@@ -11,15 +11,9 @@ import {
 } from 'react-native';
 import { 
   Search, 
-  MapPin, 
   AlertTriangle, 
-  Car, 
-  Shield, 
-  Zap, 
-  Coffee, 
   ChevronRight,
   FileCheck2,
-  Sparkles,
   ArrowRight
 } from 'lucide-react-native';
 import { Colors } from '../../constants/theme';
@@ -104,7 +98,6 @@ export default function StandardsScreen() {
             onPress={handleSearch}
             activeOpacity={0.85}
           >
-            <Sparkles size={16} color="#2DD4BF" />
             <Text style={styles.searchBtnText}>Run QCO Knowledge Graph Check</Text>
           </TouchableOpacity>
         </View>
@@ -146,7 +139,6 @@ export default function StandardsScreen() {
         <View style={styles.geoCard}>
           <View style={styles.geoTop}>
             <View style={styles.geoLeft}>
-              <MapPin size={14} color="#0D9488" />
               <Text style={styles.geoTitle}>Regional Jurisdiction: Tamil Nadu (Chennai Hub)</Text>
             </View>
             <Text style={styles.geoLink}>Modify</Text>
@@ -171,12 +163,6 @@ export default function StandardsScreen() {
                 activeOpacity={0.8}
               >
                 <View style={styles.catLeft}>
-                  <View style={styles.catIconBox}>
-                    {cat.id === 'cat-auto' && <Car size={18} color="#D97706" />}
-                    {cat.id === 'cat-safety' && <Shield size={18} color="#0D9488" />}
-                    {cat.id === 'cat-elec' && <Zap size={18} color="#4338CA" />}
-                    {cat.id === 'cat-food' && <Coffee size={18} color="#059669" />}
-                  </View>
                   <View>
                     <Text style={styles.catName}>{cat.name}</Text>
                     <Text style={styles.catCount}>{cat.count} published standards</Text>
