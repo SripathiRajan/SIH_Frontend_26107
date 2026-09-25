@@ -3,6 +3,7 @@ export interface Standard {
   isNumber: string;
   title: string;
   category: string;
+  divisionCode: string;
   qcoStatus: 'Mandatory' | 'Voluntary';
   applicableScheme: string;
   version: string;
@@ -13,11 +14,16 @@ export interface Standard {
 export interface Lab {
   id: string;
   name: string;
-  location: string;
-  distance: string;
+  city: string;
+  state: string;
+  region: 'South' | 'North' | 'West' | 'East';
+  isCurrentLocation?: boolean;
+  distance?: string;
   accreditation: string;
   scope: string[];
+  productCodes: string[];
   contact: string;
+  address: string;
 }
 
 export interface VaultDoc {
@@ -35,8 +41,9 @@ export const BIS_STANDARDS: Standard[] = [
   {
     id: 'is-4151',
     isNumber: 'IS 4151:2015',
-    title: 'Protective Helmets for Two Wheeler Motorcyclists',
-    category: 'Automotive & Road Safety',
+    title: 'Protective Helmets for Two-Wheeler Motorcyclists',
+    category: 'Mechanical Engineering',
+    divisionCode: 'MED',
     qcoStatus: 'Mandatory',
     applicableScheme: 'Scheme-I (ISI Mark)',
     version: 'Revision 4 (with Amd 1, 2, 3 - 2021)',
@@ -47,7 +54,8 @@ export const BIS_STANDARDS: Standard[] = [
     id: 'is-17803',
     isNumber: 'IS 17803:2022',
     title: 'Stainless Steel Flasks and Water Bottles',
-    category: 'Consumer Goods & Kitchenware',
+    category: 'Chemical & Materials',
+    divisionCode: 'CHD',
     qcoStatus: 'Mandatory',
     applicableScheme: 'Scheme-I (ISI Mark)',
     version: 'First Edition (2022)',
@@ -58,7 +66,8 @@ export const BIS_STANDARDS: Standard[] = [
     id: 'is-1293',
     isNumber: 'IS 1293:2019',
     title: 'Plugs and Socket-Outlets up to 250V & 16A',
-    category: 'Electrical Safety',
+    category: 'Electrotechnical',
+    divisionCode: 'ETD',
     qcoStatus: 'Mandatory',
     applicableScheme: 'Scheme-I (ISI Mark)',
     version: 'Fourth Edition (2019)',
@@ -69,42 +78,160 @@ export const BIS_STANDARDS: Standard[] = [
     id: 'is-1417',
     isNumber: 'IS 1417:2016',
     title: 'Gold and Gold Alloys — Fineness and Marking',
-    category: 'Gold & Hallmarking',
+    category: 'Hallmarking',
+    divisionCode: 'MTD',
     qcoStatus: 'Mandatory',
     applicableScheme: 'Hallmarking Scheme (6-Digit HUID)',
     version: 'Fifth Revision (Mandatory HUID 2021)',
     scope: 'Mandates 3 authentic signs: BIS Logo, Fineness in Karat (e.g. 22K916), and 6-digit alphanumeric laser-inscribed HUID code.',
     testParams: ['Fire assay cupellation', 'XRF spectrometry', '6-digit laser inscription']
+  },
+  {
+    id: 'is-16046',
+    isNumber: 'IS 16046:2018',
+    title: 'Secondary Cells & Batteries Containing Alkaline (Li-Ion)',
+    category: 'Electrotechnical',
+    divisionCode: 'ETD',
+    qcoStatus: 'Mandatory',
+    applicableScheme: 'Compulsory Registration Scheme (CRS)',
+    version: 'Part 2 (2018)',
+    scope: 'Safety requirements for portable sealed secondary lithium cells and batteries for consumer electronics and electric mobility.',
+    testParams: ['Continuous charging safety', 'External short circuit test', 'Free fall impact']
+  },
+  {
+    id: 'is-1786',
+    isNumber: 'IS 1786:2008',
+    title: 'High Strength Deformed Steel Bars (TMT) for Concrete Reinforcement',
+    category: 'Metallurgical Engineering',
+    divisionCode: 'MTD',
+    qcoStatus: 'Mandatory',
+    applicableScheme: 'Scheme-I (ISI Mark)',
+    version: 'Fourth Revision (2018)',
+    scope: 'Mechanical specifications for Fe 415, Fe 500, Fe 550 and Fe 600 grades for seismic and civil infrastructure.',
+    testParams: ['Tensile proof stress yield', 'Elongation at rupture', 'Bend and rebend ductility']
   }
 ];
 
+// All-India Testing Laboratories Directory (with user location proximity flagged)
 export const TESTING_LABS: Lab[] = [
+  // South Region (Tamil Nadu - Current Location Hub)
   {
-    id: 'lab-1',
+    id: 'lab-nth-chennai',
     name: 'National Test House (Southern Region)',
-    location: 'Taramani, Chennai, Tamil Nadu',
-    distance: '4.8 km away',
-    accreditation: 'NABL & BIS Recognized',
-    scope: ['Motorcycle Helmets (IS 4151)', 'Stainless Steel Flasks (IS 17803)', 'Cables & Wires'],
-    contact: '+91 44 2254 1234'
+    city: 'Chennai',
+    state: 'Tamil Nadu',
+    region: 'South',
+    isCurrentLocation: true,
+    distance: '4.8 km from Guindy facility',
+    accreditation: 'NABL TC-5034 · BIS Recognized',
+    scope: ['Motorcycle Helmets (IS 4151)', 'Stainless Steel Flasks (IS 17803)', 'Pipes & Fittings'],
+    productCodes: ['IS 4151', 'IS 17803'],
+    contact: '+91 44 2254 1234',
+    address: 'CIT Campus, IV Cross Road, Taramani, Chennai - 600113'
   },
   {
-    id: 'lab-2',
-    name: 'Central Electrochemical Research Institute (CSIR-CECRI)',
-    location: 'CSIR Campus, Taramani, Chennai',
-    distance: '5.2 km away',
-    accreditation: 'BIS Recognized Lab',
-    scope: ['Lithium Ion Batteries (IS 16046)', 'Metal Corrosion Testing'],
-    contact: '+91 44 2254 2061'
+    id: 'lab-cecri-chennai',
+    name: 'CSIR-Central Electrochemical Research Institute Unit',
+    city: 'Chennai',
+    state: 'Tamil Nadu',
+    region: 'South',
+    isCurrentLocation: true,
+    distance: '5.2 km from Guindy facility',
+    accreditation: 'BIS Recognized Central Laboratory',
+    scope: ['Lithium-Ion Batteries (IS 16046)', 'Metal Corrosion Testing', 'Chemical Metallurgy'],
+    productCodes: ['IS 16046', 'IS 17803'],
+    contact: '+91 44 2254 2061',
+    address: 'CSIR Madras Complex, Taramani, Chennai - 600113'
   },
   {
-    id: 'lab-3',
-    name: 'TUV SUD South Asia Accredited Laboratory',
-    location: 'Ambattur Industrial Estate, Chennai',
-    distance: '14.2 km away',
+    id: 'lab-tuv-chennai',
+    name: 'TÜV SÜD South Asia Testing Centre',
+    city: 'Chennai',
+    state: 'Tamil Nadu',
+    region: 'South',
+    isCurrentLocation: true,
+    distance: '14.2 km from Guindy facility',
     accreditation: 'NABL ISO/IEC 17025',
-    scope: ['Electrical Appliances (IS 302)', 'Plugs & Sockets (IS 1293)', 'Mechanical Toys'],
-    contact: '+91 44 4296 5555'
+    scope: ['Protective Helmets (IS 4151)', 'Plugs & Sockets (IS 1293)', 'Automotive Components'],
+    productCodes: ['IS 4151', 'IS 1293'],
+    contact: '+91 44 4296 5555',
+    address: 'Ambattur Industrial Estate, Chennai - 600058'
+  },
+  // Karnataka (South Region)
+  {
+    id: 'lab-cpri-blr',
+    name: 'Central Power Research Institute (CPRI)',
+    city: 'Bengaluru',
+    state: 'Karnataka',
+    region: 'South',
+    accreditation: 'NABL TC-5120 · BIS Apex Testing Authority',
+    scope: ['Plugs & Sockets (IS 1293)', 'High Voltage Transformers', 'EV Batteries (IS 16046)'],
+    productCodes: ['IS 1293', 'IS 16046'],
+    contact: '+91 80 2360 2365',
+    address: 'Prof. Sir C.V. Raman Road, Sadashivanagar, Bengaluru - 560080'
+  },
+  // North Region (Delhi NCR)
+  {
+    id: 'lab-sriram-delhi',
+    name: 'Shriram Institute for Industrial Research',
+    city: 'New Delhi',
+    state: 'Delhi NCR',
+    region: 'North',
+    accreditation: 'NABL TC-5011 · BIS Recognized',
+    scope: ['Stainless Steel Bottles (IS 17803)', 'Food Contact Plastics', 'Helmets (IS 4151)'],
+    productCodes: ['IS 17803', 'IS 4151'],
+    contact: '+91 11 2766 7267',
+    address: '19, University Road, Delhi - 110007'
+  },
+  {
+    id: 'lab-bis-cl-sahibabad',
+    name: 'BIS Central Laboratory (CL Sahibabad)',
+    city: 'Ghaziabad',
+    state: 'Uttar Pradesh / Delhi NCR',
+    region: 'North',
+    accreditation: 'Official BIS In-House Apex Referral Laboratory',
+    scope: ['All Scheme-I Mandatory Standards', 'Helmets (IS 4151)', 'Electrical Safety'],
+    productCodes: ['IS 4151', 'IS 17803', 'IS 1293'],
+    contact: '+91 120 277 0001',
+    address: 'Plot 20/9, Site-IV, Sahibabad Industrial Area, Ghaziabad - 201010'
+  },
+  // West Region (Maharashtra & Gujarat)
+  {
+    id: 'lab-arai-pune',
+    name: 'Automotive Research Association of India (ARAI)',
+    city: 'Pune',
+    state: 'Maharashtra',
+    region: 'West',
+    accreditation: 'NABL TC-5042 · MoRTH / BIS Apex Laboratory',
+    scope: ['Two-Wheeler Helmets (IS 4151)', 'Automotive Safety Glass', 'EV Traction Motors'],
+    productCodes: ['IS 4151'],
+    contact: '+91 20 3023 1111',
+    address: 'Survey No. 102, Vetal Hill, Off Paud Road, Kothrud, Pune - 411038'
+  },
+  {
+    id: 'lab-erda-vadodara',
+    name: 'Electrical Research and Development Association (ERDA)',
+    city: 'Vadodara',
+    state: 'Gujarat',
+    region: 'West',
+    accreditation: 'NABL TC-5002 · BIS Recognized',
+    scope: ['Plugs & Sockets (IS 1293)', 'Switchgears', 'Smart Meters'],
+    productCodes: ['IS 1293'],
+    contact: '+91 265 264 2942',
+    address: 'ERDA Road, GIDC Makarpura, Vadodara - 390010'
+  },
+  // East Region (West Bengal & Jharkhand)
+  {
+    id: 'lab-nth-kolkata',
+    name: 'National Test House (Headquarters & Eastern Region)',
+    city: 'Kolkata',
+    state: 'West Bengal',
+    region: 'East',
+    accreditation: 'NABL TC-5001 · BIS Recognized',
+    scope: ['TMT Steel Bars (IS 1786)', 'Stainless Steel Utensils', 'Chemical Testing'],
+    productCodes: ['IS 1786', 'IS 17803'],
+    contact: '+91 33 2471 1201',
+    address: 'Block CP, Sector V, Salt Lake, Kolkata - 700091'
   }
 ];
 
@@ -141,11 +268,64 @@ export const VAULT_DOCS: VaultDoc[] = [
   }
 ];
 
+// Official Bureau of Indian Standards (BIS) Division Councils with real counts and scopes
 export const CATEGORIES = [
-  { id: 'cat-auto', name: 'Speed & helmets', count: 14, icon: 'Car' },
-  { id: 'cat-safety', name: 'Safety gear & PPE', count: 8, icon: 'Shield' },
-  { id: 'cat-elec', name: 'Electrical & plugs', count: 24, icon: 'Zap' },
-  { id: 'cat-food', name: 'Food & water safety', count: 16, icon: 'Coffee' }
+  { 
+    id: 'cat-med', 
+    code: 'MED', 
+    name: 'Mechanical Engineering Division', 
+    count: 2840,
+    scope: 'Protective helmets, pressure vessels, machine tools, automotive systems'
+  },
+  { 
+    id: 'cat-chd', 
+    code: 'CHD', 
+    name: 'Chemical & Materials Division', 
+    count: 2410,
+    scope: 'Stainless steel flasks, polymers, glass containers, paints & coatings'
+  },
+  { 
+    id: 'cat-etd', 
+    code: 'ETD', 
+    name: 'Electrotechnical Division', 
+    count: 1950,
+    scope: 'Plugs & sockets, secondary lithium batteries, cables, power transformers'
+  },
+  { 
+    id: 'cat-litd', 
+    code: 'LITD', 
+    name: 'Electronics & Information Technology', 
+    count: 820,
+    scope: 'Smart meters, LED luminaires, biometric devices, IT equipment (CRS)'
+  },
+  { 
+    id: 'cat-ced', 
+    code: 'CED', 
+    name: 'Civil Engineering Division', 
+    count: 3120,
+    scope: 'Cement, structural steel, building hardware, fire fighting apparatus'
+  },
+  { 
+    id: 'cat-fad', 
+    code: 'FAD', 
+    name: 'Food & Agriculture Division', 
+    count: 1480,
+    scope: 'Packaged drinking water, infant dairy nutrition, food packaging'
+  },
+  { 
+    id: 'cat-txd', 
+    code: 'TXD', 
+    name: 'Textiles & PPE Division', 
+    count: 1260,
+    scope: 'Protective industrial clothing, technical textiles, geotextiles'
+  },
+  { 
+    id: 'cat-mtd', 
+    code: 'MTD', 
+    name: 'Metallurgical Engineering Division', 
+    count: 1640,
+    scope: 'High strength TMT deformed steel bars, copper conductors, gold hallmarking'
+  }
 ];
 
 export const TODAYS_BRIEF = [
@@ -153,21 +333,28 @@ export const TODAYS_BRIEF = [
     id: 'brief-1',
     title: 'New QCO Enforced: Stainless Steel Cookware & Bottles',
     description: 'DPIIT mandates ISI certification under IS 17803:2022. Non-ISI production prohibited across India.',
-    date: 'as on 24-Sep-2024',
-    source: 'DPIIT Central Gazette'
+    date: '25-Sep-2024',
+    source: 'DPIIT Central Gazette S.O. 3482(E)'
   },
   {
     id: 'brief-2',
     title: 'IS 4151 Helmet Visor & Chin-Strap Amendment',
-    description: 'Updated micro-slip endurance thresholds and scratch resistance test criteria notified.',
-    date: 'as on 20-Sep-2024',
-    source: 'BIS Transport Division'
+    description: 'Updated micro-slip endurance thresholds and scratch resistance test criteria notified by Transport Division.',
+    date: '22-Sep-2024',
+    source: 'BIS Gazette Notification'
   },
   {
     id: 'brief-3',
-    title: '100% 6-Digit HUID Hallmarking Mandate',
-    description: 'Sale of gold jewellery without 6-digit alphanumeric HUID code strictly prohibited in 343 districts.',
-    date: 'as on 18-Sep-2024',
-    source: 'Consumer Affairs'
+    title: '100% 6-Digit HUID Hallmarking Mandate Expansion',
+    description: 'Sale of gold jewellery without 6-digit alphanumeric HUID code strictly prohibited across all registered districts.',
+    date: '20-Sep-2024',
+    source: 'Ministry of Consumer Affairs'
+  },
+  {
+    id: 'brief-4',
+    title: 'Surveillance Audit Circular for MSME Licensees',
+    description: 'Central Branch Offices directed to verify calibration logs and quarterly NABL third-party test reports.',
+    date: '18-Sep-2024',
+    source: 'BIS Central Operations'
   }
 ];

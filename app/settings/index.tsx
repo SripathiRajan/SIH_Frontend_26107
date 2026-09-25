@@ -17,10 +17,24 @@ import {
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const [selectedLanguage, setSelectedLanguage] = useState<'English' | 'தமிழ்' | 'Tanglish' | 'हिन्दी'>('English');
+  const [selectedLanguage, setSelectedLanguage] = useState<
+    'English' | 'हिन्दी' | 'தமிழ்' | 'मराठी' | 'বাংলা' | 'ଓଡ଼ିଆ' | 'ಕನ್ನಡ' | 'తెలుగు' | 'Tanglish'
+  >('English');
   const [gazetteAlerts, setGazetteAlerts] = useState(true);
   const [auditReminders, setAuditReminders] = useState(true);
   const [offlineSyncDone, setOfflineSyncDone] = useState(false);
+
+  const LANGUAGES = [
+    'English',
+    'हिन्दी',
+    'தமிழ்',
+    'मराठी',
+    'বাংলা',
+    'ଓଡ଼ିଆ',
+    'ಕನ್ನಡ',
+    'తెలుగు',
+    'Tanglish'
+  ] as const;
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -39,14 +53,14 @@ export default function SettingsScreen() {
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <Globe size={18} color="#4338CA" />
-            <Text style={styles.cardTitle}>Language & Voice Dialect</Text>
+            <Text style={styles.cardTitle}>App Language & Interface Dialect</Text>
           </View>
           <Text style={styles.cardSub}>
-            Praman AI supports multilingual querying and natural conversational Tanglish (Tamil + English) via Bhashini models.
+            Sets the default app display language. (In chatbot, multi-lingual questions in Hindi, Marathi, Odia, Bengali, Tamil, Kannada, etc., are auto-detected automatically).
           </Text>
 
           <View style={styles.langGrid}>
-            {(['English', 'தமிழ்', 'Tanglish', 'हिन्दी'] as const).map((lang) => (
+            {LANGUAGES.map((lang) => (
               <TouchableOpacity 
                 key={lang} 
                 style={[styles.langBtn, selectedLanguage === lang && styles.langBtnActive]}

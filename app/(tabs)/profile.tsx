@@ -24,7 +24,7 @@ const COMPANY_INFO = {
   udyam: 'UDYAM-TN-02-0049281',
   category: 'MSME Manufacturing',
   status: 'Active BIS Licensee',
-  signatory: 'Sripathinathan R. (Managing Director)',
+  signatory: 'Sripathi (Managing Director)',
   address: 'Plot 42, SIDCO Guindy, Chennai - 600 032, Tamil Nadu',
   complianceScore: 96,
 };

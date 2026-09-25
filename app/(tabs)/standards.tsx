@@ -7,58 +7,77 @@ import {
   TextInput, 
   TouchableOpacity, 
   SafeAreaView,
-  Platform 
+  Modal
 } from 'react-native';
 import { 
   Search, 
   AlertTriangle, 
-  ChevronRight,
-  FileCheck2,
-  ArrowRight
+  ChevronRight, 
+  ArrowRight,
+  X
 } from 'lucide-react-native';
-import { Colors } from '../../constants/theme';
-import { CATEGORIES } from '../../services/mockData';
+import { BIS_STANDARDS, CATEGORIES } from '../../services/mockData';
 
 export default function StandardsScreen() {
   const [query, setQuery] = useState('');
   const [result, setResult] = useState<any>(null);
+  const [selectedJurisdiction, setSelectedJurisdiction] = useState('Southern Zone · Tamil Nadu & Puducherry (CNBO)');
+  const [showJurisdictionModal, setShowJurisdictionModal] = useState(false);
+  const [selectedDivision, setSelectedDivision] = useState<string | null>(null);
+
+  const JURISDICTIONS = [
+    { id: 'j-south', name: 'Southern Zone · Tamil Nadu & Puducherry (CNBO Hub)' },
+    { id: 'j-north', name: 'Northern Zone · Delhi NCR, Punjab & Haryana (CL Sahibabad)' },
+    { id: 'j-west', name: 'Western Zone · Maharashtra & Goa (Mumbai BO)' },
+    { id: 'j-east', name: 'Eastern Zone · West Bengal & Odisha (Kolkata Hub)' },
+    { id: 'j-south2', name: 'Southern Zone II · Karnataka & Kerala (Bengaluru BO)' },
+  ];
 
   const handleSearch = () => {
     if (!query.trim()) return;
     const q = query.toLowerCase();
+    const matched = BIS_STANDARDS.find(s => 
+      s.isNumber.toLowerCase().includes(q) || 
+      s.title.toLowerCase().includes(q) ||
+      s.category.toLowerCase().includes(q)
+    );
 
-    if (q.includes('bottle') || q.includes('flask') || q.includes('steel')) {
+    if (matched) {
       setResult({
-        product: 'Stainless Steel Water Bottles & Vacuum Flasks',
-        isNumber: 'IS 17803:2022',
-        status: 'Mandatory QCO',
-        scheme: 'Scheme-I (ISI Mark Certification)',
-        ministry: 'DPIIT Ministry of Commerce & Industry',
-        gazette: 'S.O. 3144(E) dated 14-Jul-2023',
-        rawMaterial: 'Food-Grade Stainless Steel (IS 6911:2017)',
-        tests: 'Vacuum thermal retention (12h/24h) & drop leakage resistance'
-      });
-    } else if (q.includes('helmet') || q.includes('two wheeler')) {
-      setResult({
-        product: 'Protective Helmets for Two Wheeler Motorcyclists',
-        isNumber: 'IS 4151:2015',
-        status: 'Mandatory QCO',
-        scheme: 'Scheme-I (ISI Mark Certification)',
-        ministry: 'MoRTH (Ministry of Road Transport & Highways)',
-        gazette: 'S.O. 4252(E) - Section 129 Motor Vehicles Act',
-        rawMaterial: 'Max weight 1,200g with impact attenuation shell',
-        tests: 'Rigid anvil impact test, retention chin strap micro-slip'
+        product: matched.title,
+        isNumber: matched.isNumber,
+        status: matched.qcoStatus.toUpperCase() + ' (ISI Scheme-I)',
+        scheme: matched.applicableScheme,
+        ministry: 'Ministry of Heavy Industries & DPIIT',
+        gazette: matched.version,
+        tests: matched.testParams.join(', ')
       });
     } else {
       setResult({
         product: query,
-        isNumber: 'IS 1293:2019',
-        status: 'Mandatory QCO',
-        scheme: 'Scheme-I (ISI Mark)',
-        ministry: 'DPIIT Electrical Appliances Order',
-        gazette: 'Gazette S.O. 2020',
-        rawMaterial: 'Insulated flame retardant thermoplastic',
-        tests: 'Glow wire test & temperature rise under load'
+        isNumber: 'Under Evaluation',
+        status: 'VOLUNTARY STANDARD',
+        scheme: 'Scheme-I / Scheme-IV',
+        ministry: 'BIS Standards Promotion Council',
+        gazette: 'Consult latest gazette amendment',
+        tests: 'General chemical purity & dimensional endurance'
+      });
+    }
+  };
+
+  const handleDivisionClick = (div: typeof CATEGORIES[0]) => {
+    setSelectedDivision(selectedDivision === div.id ? null : div.id);
+    setQuery(div.code);
+    const matched = BIS_STANDARDS.find(s => s.divisionCode === div.code);
+    if (matched) {
+      setResult({
+        product: matched.title,
+        isNumber: matched.isNumber,
+        status: matched.qcoStatus.toUpperCase() + ' (ISI Scheme-I)',
+        scheme: matched.applicableScheme,
+        ministry: 'Central Government Gazette',
+        gazette: matched.version,
+        tests: matched.testParams.join(', ')
       });
     }
   };
@@ -67,27 +86,24 @@ export default function StandardsScreen() {
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         
-        {/* GovTech Header */}
+        {/* Header */}
         <View style={styles.header}>
-          <View style={styles.badgeRow}>
-            <Text style={styles.badgeText}>DPIIT & BIS REPOSITORY</Text>
-          </View>
-          <Text style={styles.title}>QCO Knowledge Graph & Standards</Text>
+          <Text style={styles.title}>Standards & QCO Verification</Text>
           <Text style={styles.subtitle}>
-            Instantly map any product description to its applicable Indian Standard (IS Code), mandatory certification scheme, and enforcing ministry gazette.
+            Official Bureau of Indian Standards (BIS) Registry & Quality Control Orders
           </Text>
         </View>
 
-        {/* QCO Search Box */}
+        {/* Search Card */}
         <View style={styles.searchCard}>
-          <Text style={styles.searchPrompt}>Enter product description or keyword:</Text>
-          <View style={styles.inputContainer}>
-            <Search size={16} color="#94A3B8" />
+          <Text style={styles.searchPrompt}>Verify Product Compliance & Mandatory Standards</Text>
+          <View style={styles.inputRow}>
+            <Search size={18} color="#64748B" style={styles.searchIcon} />
             <TextInput
               style={styles.input}
               value={query}
               onChangeText={setQuery}
-              placeholder="e.g. Stainless steel bottle, two wheeler helmet, plugs..."
+              placeholder="e.g. Helmet, IS 4151, Stainless steel bottle, Plugs..."
               placeholderTextColor="#94A3B8"
               onSubmitEditing={handleSearch}
             />
@@ -127,7 +143,7 @@ export default function StandardsScreen() {
             </View>
 
             <View style={styles.extraBox}>
-              <Text style={styles.extraLabel}>Enforcing Gazette & Ministry:</Text>
+              <Text style={styles.extraLabel}>Enforcing Authority & Gazette:</Text>
               <Text style={styles.extraVal}>{result.ministry} ({result.gazette})</Text>
               <Text style={styles.extraLabel}>Mandatory Testing Scope:</Text>
               <Text style={styles.extraVal}>{result.tests}</Text>
@@ -135,46 +151,109 @@ export default function StandardsScreen() {
           </View>
         )}
 
-        {/* Localized Geofence Notice */}
-        <View style={styles.geoCard}>
-          <View style={styles.geoTop}>
-            <View style={styles.geoLeft}>
-              <Text style={styles.geoTitle}>Regional Jurisdiction: Tamil Nadu (Chennai Hub)</Text>
+        {/* Meaningful Regulatory Jurisdiction Card */}
+        <View style={styles.jurisdictionCard}>
+          <View style={styles.jurisdictionTop}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.jurisdictionLabel}>REGULATORY JURISDICTION & ENFORCEMENT ZONE</Text>
+              <Text style={styles.jurisdictionValue}>{selectedJurisdiction}</Text>
             </View>
-            <Text style={styles.geoLink}>Modify</Text>
+            <TouchableOpacity 
+              style={styles.modifyBtn}
+              onPress={() => setShowJurisdictionModal(true)}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.modifyBtnText}>Change Zone</Text>
+            </TouchableOpacity>
           </View>
-          <Text style={styles.geoDesc}>
-            Prioritizes local state testing laboratories and South Zone enforcement deadlines.
+          
+          <View style={styles.jurisdictionDivider} />
+          
+          <Text style={styles.jurisdictionExplanation}>
+            This setting configures your designated BIS Branch Office for annual surveillance audits, aligns state gazette enforcement cutoffs, and prioritizes third-party NABL testing laboratories within 250 km.
           </Text>
         </View>
 
-        {/* Standards Guidelines - BROWSE BY CATEGORY */}
+        {/* Official BIS Standards Divisions (Real Data, Neatly Arranged) */}
         <View style={styles.categorySection}>
           <View style={styles.catHeaderRow}>
-            <Text style={styles.categoryHeader}>STANDARDS DIVISIONS</Text>
-            <Text style={styles.catCountTotal}>6 Central Councils</Text>
+            <View>
+              <Text style={styles.categoryHeader}>BIS STANDARDS DIVISION COUNCILS</Text>
+              <Text style={styles.categorySub}>8 Central Technical Divisions · 14,000+ Indian Standards</Text>
+            </View>
           </View>
 
-          <View style={styles.categoryGrid}>
-            {CATEGORIES.map(cat => (
-              <TouchableOpacity 
-                key={cat.id} 
-                style={styles.categoryCard}
-                activeOpacity={0.8}
-              >
-                <View style={styles.catLeft}>
-                  <View>
-                    <Text style={styles.catName}>{cat.name}</Text>
-                    <Text style={styles.catCount}>{cat.count} published standards</Text>
+          <View style={styles.divisionList}>
+            {CATEGORIES.map(cat => {
+              const isSelected = selectedDivision === cat.id;
+              return (
+                <TouchableOpacity 
+                  key={cat.id} 
+                  style={[styles.divisionCard, isSelected && styles.divisionCardSelected]}
+                  onPress={() => handleDivisionClick(cat)}
+                  activeOpacity={0.8}
+                >
+                  <View style={styles.divisionTopRow}>
+                    <View style={styles.divisionCodeBadge}>
+                      <Text style={styles.divisionCodeText}>{cat.code}</Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.divisionName}>{cat.name}</Text>
+                      <Text style={styles.divisionScope}>{cat.scope}</Text>
+                    </View>
+                    <View style={styles.divisionCountBadge}>
+                      <Text style={styles.divisionCountText}>{cat.count.toLocaleString()} Standards</Text>
+                    </View>
                   </View>
-                </View>
-                <ChevronRight size={16} color="#CBD5E1" />
-              </TouchableOpacity>
-            ))}
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
 
       </ScrollView>
+
+      {/* Jurisdiction Change Modal */}
+      <Modal
+        visible={showJurisdictionModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowJurisdictionModal(false)}
+      >
+        <SafeAreaView style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Select Regulatory Jurisdiction</Text>
+              <TouchableOpacity onPress={() => setShowJurisdictionModal(false)}>
+                <X size={20} color="#0F172A" />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.modalList}>
+              {JURISDICTIONS.map(j => (
+                <TouchableOpacity
+                  key={j.id}
+                  style={[
+                    styles.jurisdictionOption,
+                    selectedJurisdiction === j.name && styles.jurisdictionOptionActive
+                  ]}
+                  onPress={() => {
+                    setSelectedJurisdiction(j.name);
+                    setShowJurisdictionModal(false);
+                  }}
+                >
+                  <Text style={[
+                    styles.jurisdictionOptionText,
+                    selectedJurisdiction === j.name && styles.jurisdictionOptionTextActive
+                  ]}>
+                    {j.name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        </SafeAreaView>
+      </Modal>
+
     </SafeAreaView>
   );
 }
@@ -192,57 +271,40 @@ const styles = StyleSheet.create({
   header: {
     gap: 4,
   },
-  badgeRow: {
-    backgroundColor: '#EEF2FF',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-    alignSelf: 'flex-start',
-  },
-  badgeText: {
-    fontSize: 9,
-    fontWeight: '800',
-    color: '#312E81',
-    letterSpacing: 0.5,
-  },
   title: {
     fontSize: 20,
     fontWeight: '800',
     color: '#0F172A',
-    marginTop: 2,
   },
   subtitle: {
     fontSize: 12,
-    color: '#475569',
-    lineHeight: 17,
+    color: '#64748B',
+    lineHeight: 18,
   },
   searchCard: {
     backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    borderRadius: 20,
-    padding: 16,
-    gap: 10,
-    shadowColor: '#1E1B4B',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    elevation: 1,
+    gap: 12,
   },
   searchPrompt: {
-    fontSize: 11,
+    fontSize: 13,
     fontWeight: '700',
-    color: '#334155',
+    color: '#0F172A',
   },
-  inputContainer: {
+  inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
     backgroundColor: '#F8FAFC',
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#CBD5E1',
-    borderRadius: 12,
+    borderColor: '#E2E8F0',
     paddingHorizontal: 12,
+  },
+  searchIcon: {
+    marginRight: 8,
   },
   input: {
     flex: 1,
@@ -251,191 +313,267 @@ const styles = StyleSheet.create({
     color: '#0F172A',
   },
   searchBtn: {
-    backgroundColor: '#1E1B4B',
-    borderRadius: 12,
+    backgroundColor: '#0F172A',
+    borderRadius: 8,
     paddingVertical: 12,
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
   },
   searchBtnText: {
-    color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '700',
+    color: '#FFFFFF',
   },
+
+  // Result Card
   resultCard: {
     backgroundColor: '#FFFFFF',
-    borderWidth: 1.5,
-    borderColor: '#C7D2FE',
-    borderRadius: 20,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
     padding: 16,
     gap: 12,
   },
   resultHeader: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
     justifyContent: 'space-between',
+    alignItems: 'flex-start',
     gap: 8,
   },
   resultTag: {
     fontSize: 9,
     fontWeight: '800',
-    color: '#4338CA',
-    letterSpacing: 0.5,
+    color: '#64748B',
   },
   resultProduct: {
     fontSize: 15,
     fontWeight: '800',
     color: '#0F172A',
-    marginTop: 1,
+    marginTop: 2,
   },
   mandatoryBadge: {
-    backgroundColor: '#FEF3C7',
-    borderWidth: 1,
-    borderColor: '#FDE68A',
+    backgroundColor: '#ECFDF5',
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 8,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
   },
   mandatoryText: {
-    color: '#92400E',
     fontSize: 10,
     fontWeight: '800',
+    color: '#047857',
   },
   detailGrid: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 10,
   },
   detailBox: {
     flex: 1,
     backgroundColor: '#F8FAFC',
-    borderRadius: 12,
     padding: 10,
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#F1F5F9',
   },
   detailLabel: {
     fontSize: 9,
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#64748B',
   },
   detailValBold: {
     fontSize: 13,
     fontWeight: '800',
-    color: '#1E1B4B',
-    marginTop: 2,
-    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
-  },
-  detailVal: {
-    fontSize: 12,
-    fontWeight: '700',
     color: '#0F172A',
     marginTop: 2,
   },
+  detailVal: {
+    fontSize: 11,
+    color: '#334155',
+    marginTop: 2,
+  },
   extraBox: {
-    backgroundColor: '#F1F5F9',
-    borderRadius: 12,
+    backgroundColor: '#F8FAFC',
     padding: 10,
-    gap: 2,
+    borderRadius: 8,
+    gap: 4,
   },
   extraLabel: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#475569',
+    color: '#64748B',
   },
   extraVal: {
     fontSize: 11,
     color: '#0F172A',
     marginBottom: 4,
   },
-  geoCard: {
-    backgroundColor: '#F0FDFA',
+
+  // Jurisdiction Card
+  jurisdictionCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#CCFBF1',
-    borderRadius: 16,
-    padding: 12,
-    gap: 4,
-  },
-  geoTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  geoLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  geoTitle: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#0F766E',
-  },
-  geoLink: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#0D9488',
-  },
-  geoDesc: {
-    fontSize: 10,
-    color: '#115E59',
-  },
-  categorySection: {
+    borderColor: '#E2E8F0',
+    padding: 16,
     gap: 10,
-    marginTop: 4,
   },
-  catHeaderRow: {
+  jurisdictionTop: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: 8,
   },
-  categoryHeader: {
-    fontSize: 11,
+  jurisdictionLabel: {
+    fontSize: 9,
     fontWeight: '800',
     color: '#64748B',
     letterSpacing: 0.5,
   },
-  catCountTotal: {
-    fontSize: 11,
-    color: '#94A3B8',
+  jurisdictionValue: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#0F172A',
+    marginTop: 2,
   },
-  categoryGrid: {
-    gap: 8,
-  },
-  categoryCard: {
-    backgroundColor: '#FFFFFF',
+  modifyBtn: {
+    backgroundColor: '#F1F5F9',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    borderRadius: 16,
-    padding: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
   },
-  catLeft: {
+  modifyBtnText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#0F172A',
+  },
+  jurisdictionDivider: {
+    height: 1,
+    backgroundColor: '#F1F5F9',
+  },
+  jurisdictionExplanation: {
+    fontSize: 11,
+    color: '#475569',
+    lineHeight: 16,
+  },
+
+  // Standards Divisions Section
+  categorySection: {
+    gap: 12,
+  },
+  catHeaderRow: {
+    gap: 2,
+  },
+  categoryHeader: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  categorySub: {
+    fontSize: 11,
+    color: '#64748B',
+  },
+  divisionList: {
+    gap: 8,
+  },
+  divisionCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    padding: 14,
+  },
+  divisionCardSelected: {
+    borderColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
+  },
+  divisionTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
   },
-  catIconBox: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: '#F8FAFC',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
+  divisionCodeBadge: {
+    backgroundColor: '#0F172A',
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 6,
+    minWidth: 46,
     alignItems: 'center',
-    justifyContent: 'center',
   },
-  catName: {
+  divisionCodeText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    fontFamily: 'monospace',
+  },
+  divisionName: {
     fontSize: 13,
     fontWeight: '700',
     color: '#0F172A',
   },
-  catCount: {
+  divisionScope: {
     fontSize: 11,
     color: '#64748B',
-    marginTop: 1,
+    marginTop: 2,
+  },
+  divisionCountBadge: {
+    backgroundColor: '#F1F5F9',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  divisionCountText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#475569',
+  },
+
+  // Modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(15, 23, 42, 0.6)',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    padding: 18,
+    gap: 14,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  modalList: {
+    gap: 8,
+  },
+  jurisdictionOption: {
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  jurisdictionOptionActive: {
+    backgroundColor: '#0F172A',
+    borderColor: '#0F172A',
+  },
+  jurisdictionOptionText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#0F172A',
+  },
+  jurisdictionOptionTextActive: {
+    color: '#FFFFFF',
+    fontWeight: '700',
   },
 });

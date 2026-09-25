@@ -1,79 +1,132 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
+import React, { useState } from 'react';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  ScrollView, 
+  TouchableOpacity, 
+  SafeAreaView,
+  Modal
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { 
   Bell, 
   ChevronRight, 
   Search,
   ArrowRight,
-  Settings
+  Settings,
+  X,
+  ExternalLink
 } from 'lucide-react-native';
 import { TODAYS_BRIEF } from '../../services/mockData';
 
 export default function HomeScreen() {
   const router = useRouter();
+  const [showNotifications, setShowNotifications] = useState(false);
 
   return (
     <SafeAreaView style={styles.safeArea}>
       
-      {/* 1. Clean, Spacious Top Bar */}
+      {/* 1. Top Bar */}
       <View style={styles.header}>
         <View style={styles.headerProfile}>
           <View style={styles.avatar}>
             <Text style={styles.avatarText}>SR</Text>
           </View>
           <View>
-            <Text style={styles.greetingTitle}>Good evening, Sripathinathan</Text>
-            <Text style={styles.greetingSub}>Apex MSME Safety Facility</Text>
+            <Text style={styles.greetingTitle}>Good evening, Sripathi</Text>
+            <Text style={styles.greetingSub}>BIS Licensee Dashboard</Text>
           </View>
         </View>
 
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
           <TouchableOpacity 
             style={styles.bellBtn} 
             onPress={() => router.push('/settings')}
             activeOpacity={0.7}
             accessibilityLabel="Settings"
           >
-            <Settings size={18} color="#64748B" />
+            <Settings size={18} color="#475569" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.bellBtn} activeOpacity={0.7}>
-            <Bell size={18} color="#64748B" />
-            <View style={styles.bellDot} />
+
+          <TouchableOpacity 
+            style={styles.bellBtn} 
+            onPress={() => setShowNotifications(true)}
+            activeOpacity={0.7}
+            accessibilityLabel="Notifications"
+          >
+            <Bell size={18} color="#475569" />
+            <View style={styles.bellBadge}>
+              <Text style={styles.bellBadgeText}>{TODAYS_BRIEF.length}</Text>
+            </View>
           </TouchableOpacity>
         </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         
-        {/* 2. Unified Context Card (Spacious, Elegant, Light) */}
-        <View style={styles.contextCard}>
-          <View style={styles.locationRow}>
-            <Text style={styles.locationText}>Chennai, Tamil Nadu · Regional Desk</Text>
+        {/* 2. Valid Enterprise Compliance Card */}
+        <View style={styles.enterpriseCard}>
+          <View style={styles.cardHeaderRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.cardSuperTitle}>ENTERPRISE COMPLIANCE STATUS</Text>
+              <Text style={styles.companyName}>Apex Safety Gear & Flasks Pvt. Ltd.</Text>
+              <Text style={styles.udyamText}>UDYAM-TN-02-0049281 · MSME Manufacturing</Text>
+            </View>
+            <View style={styles.statusPill}>
+              <Text style={styles.statusPillText}>QCO Compliant</Text>
+            </View>
           </View>
-          
-          <Text style={styles.sectorTitle}>Two-Wheeler Helmets & Stainless Flasks</Text>
-          
-          <View style={styles.metricsPillsRow}>
-            <View style={styles.pillMandatory}>
-              <Text style={styles.pillMandatoryText}>QCO Mandatory</Text>
+
+          <View style={styles.cardDivider} />
+
+          <View style={styles.facilityRow}>
+            <Text style={styles.facilityLabel}>Registered Facility:</Text>
+            <Text style={styles.facilityVal}>Plot 42, SIDCO Guindy Industrial Estate, Chennai</Text>
+          </View>
+
+          {/* Certified Product Lines */}
+          <View style={styles.productLinesBox}>
+            <Text style={styles.productLinesTitle}>Certified Product Lines (2 Active ISI Licenses):</Text>
+            
+            <View style={styles.productItem}>
+              <View style={styles.bulletPoint} />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.productItemName}>Two-Wheeler Helmets</Text>
+                <Text style={styles.productItemMeta}>Standard: IS 4151:2015 · License: CM/L-8472910</Text>
+              </View>
+              <Text style={styles.productExpiry}>Valid 2027</Text>
             </View>
 
-            <View style={styles.pillStandard}>
-              <Text style={styles.pillStandardText}>2 Active Licenses (CM/L)</Text>
+            <View style={styles.productItem}>
+              <View style={styles.bulletPoint} />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.productItemName}>Stainless Steel Flasks & Water Bottles</Text>
+                <Text style={styles.productItemMeta}>Standard: IS 17803:2022 · License: CM/L-9104823</Text>
+              </View>
+              <Text style={styles.productExpiry}>Valid 2026</Text>
             </View>
           </View>
+
+          <TouchableOpacity 
+            style={styles.cardActionBtn}
+            onPress={() => router.push('/(tabs)/profile')}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.cardActionBtnText}>Manage Enterprise Credentials & Officer Details</Text>
+            <ChevronRight size={14} color="#0F172A" />
+          </TouchableOpacity>
         </View>
 
         {/* 3. Primary Elevated Action: Ask Praman */}
         <TouchableOpacity 
           style={styles.heroAskCard}
-          onPress={() => router.push('/ask')}
+          onPress={() => router.push('/(tabs)/ask')}
           activeOpacity={0.9}
         >
-          <Text style={styles.heroHeading}>Ask Praman Assistant</Text>
+          <Text style={styles.heroHeading}>Ask Praman Compliance Assistant</Text>
           <Text style={styles.heroSubheading}>
-            Plain-language Q&A for Indian Standards, ISI mark licensing, and NABL testing labs.
+            Ask questions in English, Hindi, Tamil, Marathi, Bengali, Odia, Kannada, or Tanglish. Instant parallel retrieval from official BIS gazettes.
           </Text>
 
           <View style={styles.fakeSearchTrigger}>
@@ -85,7 +138,7 @@ export default function HomeScreen() {
           </View>
         </TouchableOpacity>
 
-        {/* 4. Quick Actions Grid (Clean, Roomy 3 Cards) */}
+        {/* 4. Quick Services Grid */}
         <View style={styles.actionsSection}>
           <Text style={styles.sectionHeader}>Quick Services</Text>
 
@@ -93,11 +146,11 @@ export default function HomeScreen() {
             {/* Card 1: QCO Checker */}
             <TouchableOpacity 
               style={styles.actionCard}
-              onPress={() => router.push('/standards')}
+              onPress={() => router.push('/(tabs)/standards')}
               activeOpacity={0.8}
             >
-              <Text style={styles.cardMainTitle}>QCO Checker</Text>
-              <Text style={styles.cardSubtitle}>Check mandatory standards</Text>
+              <Text style={styles.cardMainTitle}>QCO & Standards Checker</Text>
+              <Text style={styles.cardSubtitle}>Search 14,000+ Indian standards & mandatory gazettes</Text>
               <ChevronRight size={16} color="#CBD5E1" style={styles.chevronPos} />
             </TouchableOpacity>
 
@@ -108,43 +161,63 @@ export default function HomeScreen() {
               activeOpacity={0.8}
             >
               <Text style={styles.cardMainTitle}>Document Vault</Text>
-              <Text style={styles.cardSubtitle}>3 verified certificates</Text>
+              <Text style={styles.cardSubtitle}>3 verified certificates & NABL test reports</Text>
               <ChevronRight size={16} color="#CBD5E1" style={styles.chevronPos} />
             </TouchableOpacity>
 
             {/* Card 3: NABL Labs */}
             <TouchableOpacity 
               style={styles.actionCard}
-              onPress={() => router.push('/map')}
+              onPress={() => router.push('/(tabs)/map')}
               activeOpacity={0.8}
             >
-              <Text style={styles.cardMainTitle}>Find a Lab</Text>
-              <Text style={styles.cardSubtitle}>NABL accredited near you</Text>
+              <Text style={styles.cardMainTitle}>All-India Testing Labs Directory</Text>
+              <Text style={styles.cardSubtitle}>Find accredited test facilities by product and city</Text>
               <ChevronRight size={16} color="#CBD5E1" style={styles.chevronPos} />
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* 5. Today's BIS Brief (Just 2 clean cards with breathing space) */}
-        <View style={styles.briefSection}>
-          <View style={styles.briefHeaderRow}>
-            <Text style={styles.sectionHeader}>Today's BIS Brief</Text>
-            <Text style={styles.freshnessTag}>as on 24-Sep-2024</Text>
-          </View>
-
-          <View style={styles.briefList}>
-            {TODAYS_BRIEF.slice(0, 2).map((item) => (
-              <View key={item.id} style={styles.briefCard}>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.briefTitle}>{item.title}</Text>
-                  <Text style={styles.briefDesc}>{item.description}</Text>
-                </View>
-              </View>
-            ))}
-          </View>
-        </View>
-
       </ScrollView>
+
+      {/* 5. Notifications & Today's BIS Brief Modal */}
+      <Modal
+        visible={showNotifications}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setShowNotifications(false)}
+      >
+        <SafeAreaView style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <View>
+                <Text style={styles.modalTitle}>Notifications & BIS Briefs</Text>
+                <Text style={styles.modalSub}>Real-time Gazette updates & compliance circulars</Text>
+              </View>
+              <TouchableOpacity 
+                style={styles.modalCloseBtn}
+                onPress={() => setShowNotifications(false)}
+              >
+                <X size={20} color="#0F172A" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView contentContainerStyle={styles.modalScroll} showsVerticalScrollIndicator={false}>
+              {TODAYS_BRIEF.map((item) => (
+                <View key={item.id} style={styles.notificationCard}>
+                  <View style={styles.notificationTop}>
+                    <Text style={styles.notificationSource}>{item.source}</Text>
+                    <Text style={styles.notificationDate}>{item.date}</Text>
+                  </View>
+                  <Text style={styles.notificationTitle}>{item.title}</Text>
+                  <Text style={styles.notificationDesc}>{item.description}</Text>
+                </View>
+              ))}
+            </ScrollView>
+          </View>
+        </SafeAreaView>
+      </Modal>
+
     </SafeAreaView>
   );
 }
@@ -158,11 +231,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 22,
-    paddingVertical: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    borderBottomColor: '#E2E8F0',
   },
   headerProfile: {
     flexDirection: 'row',
@@ -170,23 +243,21 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#EEF2FF',
-    borderWidth: 1.5,
-    borderColor: '#C7D2FE',
+    width: 38,
+    height: 38,
+    borderRadius: 8,
+    backgroundColor: '#0F172A',
     alignItems: 'center',
     justifyContent: 'center',
   },
   avatarText: {
     fontSize: 14,
     fontWeight: '800',
-    color: '#312E81',
+    color: '#FFFFFF',
   },
   greetingTitle: {
-    fontSize: 15,
-    fontWeight: '700',
+    fontSize: 16,
+    fontWeight: '800',
     color: '#0F172A',
   },
   greetingSub: {
@@ -195,243 +266,299 @@ const styles = StyleSheet.create({
     marginTop: 1,
   },
   bellBtn: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: '#F8FAFC',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    backgroundColor: '#F1F5F9',
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'relative',
-  },
-  bellDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#D97706',
-    position: 'absolute',
-    top: 9,
-    right: 9,
-  },
-  scrollContent: {
-    padding: 20,
-    paddingBottom: 40,
-    gap: 20,
-  },
-  contextCard: {
-    backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    borderRadius: 20,
-    padding: 20,
-    gap: 10,
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    elevation: 1,
+    position: 'relative',
   },
-  locationRow: {
-    flexDirection: 'row',
+  bellBadge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    backgroundColor: '#0F172A',
+    borderRadius: 8,
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+    minWidth: 16,
     alignItems: 'center',
-    gap: 6,
   },
-  locationText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#0F766E',
+  bellBadgeText: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#FFFFFF',
   },
-  sectorTitle: {
-    fontSize: 18,
+  scrollContent: {
+    padding: 16,
+    paddingBottom: 40,
+    gap: 16,
+  },
+
+  // Valid Enterprise Card
+  enterpriseCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    padding: 16,
+    gap: 12,
+  },
+  cardHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  cardSuperTitle: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#64748B',
+    letterSpacing: 0.8,
+  },
+  companyName: {
+    fontSize: 15,
     fontWeight: '800',
     color: '#0F172A',
-    lineHeight: 24,
+    marginTop: 2,
   },
-  metricsPillsRow: {
-    flexDirection: 'row',
-    gap: 8,
-    marginTop: 4,
+  udyamText: {
+    fontSize: 11,
+    color: '#475569',
+    marginTop: 2,
   },
-  pillMandatory: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    backgroundColor: '#FEF3C7',
+  statusPill: {
+    backgroundColor: '#ECFDF5',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#FDE68A',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 10,
+    borderColor: '#A7F3D0',
   },
-  pillDotAmber: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#D97706',
+  statusPillText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#047857',
   },
-  pillMandatoryText: {
+  cardDivider: {
+    height: 1,
+    backgroundColor: '#F1F5F9',
+  },
+  facilityRow: {
+    gap: 2,
+  },
+  facilityLabel: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#64748B',
+  },
+  facilityVal: {
+    fontSize: 12,
+    color: '#0F172A',
+    fontWeight: '600',
+  },
+  productLinesBox: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 8,
+    padding: 12,
+    gap: 10,
+    borderWidth: 1,
+    borderColor: '#F1F5F9',
+  },
+  productLinesTitle: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#92400E',
+    color: '#334155',
   },
-  pillStandard: {
-    backgroundColor: '#F1F5F9',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 10,
+  productItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
   },
-  pillStandardText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#475569',
+  bulletPoint: {
+    width: 5,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: '#0F172A',
+    marginTop: 6,
   },
-  heroAskCard: {
-    backgroundColor: '#1E1B4B',
-    borderRadius: 22,
-    padding: 22,
-    gap: 12,
-    shadowColor: '#1E1B4B',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.12,
-    shadowRadius: 14,
-    elevation: 3,
+  productItemName: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0F172A',
   },
-  heroTop: {
+  productItemMeta: {
+    fontSize: 10,
+    color: '#64748B',
+    marginTop: 1,
+  },
+  productExpiry: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#047857',
+  },
+  cardActionBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-  },
-  heroIconBox: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  askTag: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: '#F1F5F9',
     borderRadius: 8,
   },
-  askTagText: {
-    fontSize: 9,
-    fontWeight: '800',
-    color: '#2DD4BF',
-    letterSpacing: 0.5,
+  cardActionBtnText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#0F172A',
+  },
+
+  // Hero Card
+  heroAskCard: {
+    backgroundColor: '#0F172A',
+    borderRadius: 12,
+    padding: 18,
+    gap: 12,
   },
   heroHeading: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: '800',
     color: '#FFFFFF',
   },
   heroSubheading: {
     fontSize: 12,
-    color: '#C7D2FE',
+    color: '#94A3B8',
     lineHeight: 18,
   },
   fakeSearchTrigger: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    marginTop: 4,
+    backgroundColor: '#1E293B',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    gap: 8,
   },
   fakeSearchPlaceholder: {
     flex: 1,
     fontSize: 12,
-    color: '#64748B',
+    color: '#94A3B8',
   },
+
+  // Quick Services
   actionsSection: {
-    gap: 12,
+    gap: 10,
   },
   sectionHeader: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '800',
     color: '#0F172A',
   },
   gridContainer: {
-    gap: 10,
+    gap: 8,
   },
   actionCard: {
     backgroundColor: '#FFFFFF',
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    borderRadius: 18,
-    padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
+    padding: 14,
+    gap: 3,
     position: 'relative',
   },
-  cardIconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   cardMainTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '700',
     color: '#0F172A',
   },
   cardSubtitle: {
     fontSize: 11,
     color: '#64748B',
-    marginTop: 2,
+    paddingRight: 24,
   },
   chevronPos: {
-    marginLeft: 'auto',
+    position: 'absolute',
+    right: 14,
+    top: 18,
   },
-  briefSection: {
-    gap: 12,
+
+  // Modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(15, 23, 42, 0.6)',
+    justifyContent: 'flex-end',
   },
-  briefHeaderRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  freshnessTag: {
-    fontSize: 11,
-    color: '#94A3B8',
-    fontWeight: '500',
-  },
-  briefList: {
-    gap: 10,
-  },
-  briefCard: {
+  modalContainer: {
     backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 18,
-    padding: 16,
-    flexDirection: 'row',
-    gap: 14,
-    alignItems: 'center',
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+    maxHeight: '80%',
+    paddingBottom: 24,
   },
-  briefIconBox: {
-    width: 36,
-    height: 36,
-    borderRadius: 12,
-    backgroundColor: '#EEF2FF',
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
+  },
+  modalTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  modalSub: {
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 2,
+  },
+  modalCloseBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F1F5F9',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  briefTitle: {
+  modalScroll: {
+    padding: 16,
+    gap: 12,
+  },
+  notificationCard: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 10,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    gap: 4,
+  },
+  notificationTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  notificationSource: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#0284C7',
+  },
+  notificationDate: {
+    fontSize: 10,
+    color: '#94A3B8',
+  },
+  notificationTitle: {
     fontSize: 13,
     fontWeight: '700',
     color: '#0F172A',
+    marginTop: 2,
   },
-  briefDesc: {
+  notificationDesc: {
     fontSize: 11,
-    color: '#64748B',
-    marginTop: 3,
+    color: '#475569',
     lineHeight: 16,
+    marginTop: 2,
   },
 });
