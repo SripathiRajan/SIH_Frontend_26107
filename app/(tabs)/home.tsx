@@ -18,6 +18,13 @@ import { TODAYS_BRIEF } from '../../services/mockData';
 export default function HomeScreen() {
   const router = useRouter();
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'GOOD MORNING, USER';
+    if (hour < 17) return 'GOOD AFTERNOON, USER';
+    return 'GOOD EVENING, USER';
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       {/* Top Header Bar */}
@@ -26,7 +33,7 @@ export default function HomeScreen() {
           <View style={styles.monogram}>
             <Text style={styles.monogramText}>PR</Text>
           </View>
-          <Text style={styles.greetingText}>GOOD EVENING, USER</Text>
+          <Text style={styles.greetingText}>{getGreeting()}</Text>
         </View>
         <TouchableOpacity style={styles.bellButton}>
           <Bell size={18} color="#4B5563" />

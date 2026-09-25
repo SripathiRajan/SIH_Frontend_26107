@@ -116,6 +116,57 @@ export default function StandardsScreen() {
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         
+        {/* Scheme Selector Tabs */}
+        <View style={{ flexDirection: 'row', gap: 6, marginBottom: 8, paddingHorizontal: 2 }}>
+          {[
+            { label: 'All Schemes', filter: 'all' },
+            { label: 'Scheme-I (ISI)', filter: 'Scheme-I' },
+            { label: 'Scheme-II (CRS)', filter: 'CRS' },
+            { label: 'Hallmarking', filter: 'Hallmarking' }
+          ].map((tab, tidx) => (
+            <TouchableOpacity
+              key={tidx}
+              style={{
+                paddingVertical: 6,
+                paddingHorizontal: 12,
+                borderRadius: 20,
+                backgroundColor: query.includes(tab.filter) || (tab.filter === 'all' && !query) ? '#0D9488' : '#F1F5F9',
+                borderWidth: 1,
+                borderColor: query.includes(tab.filter) || (tab.filter === 'all' && !query) ? '#0D9488' : '#CBD5E1'
+              }}
+              onPress={() => {
+                if (tab.filter === 'all') {
+                  setQuery('');
+                  setResult(null);
+                } else {
+                  setQuery(tab.filter);
+                  const matched = BIS_STANDARDS.find(s => s.applicableScheme.toLowerCase().includes(tab.filter.toLowerCase()));
+                  if (matched) {
+                    setResult({
+                      product: matched.title,
+                      isNumber: matched.isNumber,
+                      status: matched.qcoStatus.toUpperCase() + ` (${matched.applicableScheme})`,
+                      scheme: matched.applicableScheme,
+                      ministry: 'Central Government Gazette',
+                      gazette: matched.version,
+                      tests: matched.testParams.join(', '),
+                      sourceUrl: matched.sourceUrl,
+                      relatedStandards: matched.relatedStandards
+                    });
+                  }
+                }
+              }}
+            >
+              <Text style={{
+                fontSize: 11,
+                fontWeight: '700',
+                color: query.includes(tab.filter) || (tab.filter === 'all' && !query) ? '#FFFFFF' : '#475569'
+              }}>
+                {tab.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
         {/* Search Card */}
         <View style={styles.searchCard}>
           <Text style={styles.searchPrompt}>{t('verify_compliance_prompt')}</Text>

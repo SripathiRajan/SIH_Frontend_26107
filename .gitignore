@@ -7,3 +7,6 @@ npm-debug.*
 *.local
 .DS_Store
 Thumbs.db
+.env
+.env.*
+*.env

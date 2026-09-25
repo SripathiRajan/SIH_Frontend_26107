@@ -36,6 +36,7 @@ import {
 import { Colors, Shadows, Tints } from '../../constants/theme';
 import { TESTING_LABS } from '../../services/mockData';
 import { useLanguage } from '../../context/LanguageContext';
+import { askPramanAI, AIResponse } from '../../services/groqService';
 
 interface ChatMessage {
   sender: 'user' | 'ai';
@@ -48,6 +49,7 @@ interface ChatMessage {
   vlmMarks?: Array<{ name: string; status: 'detected' | 'unclear' | 'missing'; note: string }>;
   labs?: any[];
   uploadedFile?: { name: string; type: string; size: string };
+  isSpeaking?: boolean;
 }
 
 interface ChatSession {
@@ -65,6 +67,7 @@ export default function AskScreen() {
   const { t } = useLanguage();
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const [currentTime, setCurrentTime] = useState('');
   const [showDrawer, setShowDrawer] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -127,6 +130,49 @@ export default function AskScreen() {
     } else {
       openDrawer();
     }
+  };
+
+  const startVoiceInput = () => {
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-IN';
+
+        recognition.onstart = () => {
+          setIsListening(true);
+        };
+
+        recognition.onresult = (event: any) => {
+          setIsListening(false);
+          const transcript = event.results[0][0].transcript;
+          if (transcript) {
+            setInputText(transcript);
+            sendMessage(transcript);
+          }
+        };
+
+        recognition.onerror = (e: any) => {
+          console.warn("Speech recognition error:", e);
+          setIsListening(false);
+        };
+
+        recognition.onend = () => {
+          setIsListening(false);
+        };
+
+        try {
+          recognition.start();
+        } catch (e) {
+          setIsListening(false);
+        }
+        return;
+      }
+    }
+    // Fallback if browser speech recognition is not supported
+    sendMessage("Which Indian Standards are mandatory under QCO for motorcycle helmets?");
   };
 
   // Rename session state
@@ -373,7 +419,34 @@ export default function AskScreen() {
     } : s));
   };
 
-  const sendMessage = (customText?: string) => {
+  const speakText = (text: string, msgIndex: number) => {
+    try {
+      if (Platform.OS === 'web' && typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        if (window.speechSynthesis.isSpeaking()) {
+          window.speechSynthesis.cancel();
+          setMessages(prev => prev.map((m, i) => i === msgIndex ? { ...m, isSpeaking: false } : m));
+          return;
+        }
+        // Clean markdown characters for pleasant speech
+        const cleanSpeech = text.replace(/[*#_`]/g, '');
+        const utterance = new SpeechSynthesisUtterance(cleanSpeech);
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        utterance.onend = () => {
+          setMessages(prev => prev.map((m, i) => i === msgIndex ? { ...m, isSpeaking: false } : m));
+        };
+        utterance.onerror = () => {
+          setMessages(prev => prev.map((m, i) => i === msgIndex ? { ...m, isSpeaking: false } : m));
+        };
+        setMessages(prev => prev.map((m, i) => i === msgIndex ? { ...m, isSpeaking: true } : { ...m, isSpeaking: false }));
+        window.speechSynthesis.speak(utterance);
+      }
+    } catch (e) {
+      console.warn("Speech synthesis error:", e);
+    }
+  };
+
+  const sendMessage = async (customText?: string) => {
     const text = customText || inputText;
     if (!text.trim()) return;
 
@@ -384,140 +457,58 @@ export default function AskScreen() {
       title: s.title === 'Current Consultation' ? text.slice(0, 32) : s.title,
       messages: [...s.messages, userMsg]
     } : s));
-
     if (!customText) setInputText('');
     setIsTyping(true);
 
-    setTimeout(() => {
-      setIsTyping(false);
-      const q = text.toLowerCase();
-      let aiResponse: ChatMessage;
+    try {
+      // Build conversation history for LLM
+      const historyContext = messages.slice(-4).map(m => ({
+        role: (m.sender === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
+        content: m.text
+      }));
 
-      // 1. REJECTION FILTER: Out-of-domain queries
-      if (q.includes('cricket') || q.includes('score') || q.includes('movie') || q.includes('weather')) {
-        aiResponse = {
-          sender: 'ai',
-          type: 'rejection',
-          text: `I am **Praman**, strictly dedicated to **Indian Standards, BIS certification schemes, testing laboratories, and hallmarking regulations**.\n\nYour query does not relate to Bureau of Indian Standards services. Please inquire about standards, mandatory QCOs, or licensing procedures.`,
-          judgeScore: 99
-        };
+      // Call Groq Llama 3.3 70B AI Engine
+      const aiResult: AIResponse = await askPramanAI(text, historyContext);
+      setIsTyping(false);
+
+
+
+
+      // Check if lab query matched and enrich with labs data if applicable
+      let labsData = undefined;
+      const lowerQ = text.toLowerCase();
+      if (aiResult.type === 'labs' || lowerQ.includes('lab') || lowerQ.includes('test facility') || lowerQ.includes('where can i test')) {
+        labsData = TESTING_LABS.slice(0, 3);
       }
-      // 2. CLARIFIER AGENT: Ambiguous "how to get isi mark"
-      else if ((q.includes('how to get isi') || q.includes('isi mark procedure') || q.includes('apply for isi')) && 
-          !q.includes('bottle') && !q.includes('helmet') && !q.includes('plug') && !q.includes('led')) {
-        aiResponse = {
-          sender: 'ai',
-          type: 'clarify',
-          text: `The **ISI Mark (Scheme-I)** certification procedure depends on your product category and its in-house testing facility requirements under the relevant Indian Standard.\n\n**Which product does your enterprise manufacture?**`,
-          clarifyChips: [
-            'Stainless Steel Bottles (IS 17803)',
-            'Two-Wheeler Helmets (IS 4151)',
-            'Electrical Plugs & Sockets (IS 1293)',
-            'Packaged Drinking Water (IS 14543)'
-          ],
-          judgeScore: 95
-        };
-      }
-      // 3. TAMIL DEMO QUERY
-      else if (q.includes('tamil') || q.includes('helmet standard in tamil')) {
-        aiResponse = {
-          sender: 'ai',
-          type: 'text',
-          text: `**இருசக்கர வாகன தலைக்கவசம் (Two-Wheeler Helmet) - BIS Standard விவரங்கள்:**\n\n- **Standard Code**: **IS 4151:2015** (Revision 4 with Amendments 1, 2, 3)\n- **QCO Status**: **Mandatory (கட்டாயம்)**. ISI Mark இல்லாமல் இந்தியாவில் ஹெல்மெட் உற்பத்தி செய்யவோ அல்லது விற்கவோ தடை விதிக்கப்பட்டுள்ளது.\n- **முக்கிய பரிசோதனைகள் (Mandatory Tests)**:\n  1. Impact Absorption Test (தாக்கத்தை உறிஞ்சும் சோதனை)\n  2. Retention System (தாடை பட்டை நழுவாமல் இருக்கும் உறுதி)\n  3. Peripheral Vision & Audibility (பார்வை மற்றும் கேட்கும் திறன்)\n\n**அருகிலுள்ள NABL ஆய்வகம்**: NTH Taramani Chennai (4.8 km).`,
-          judgeScore: 97,
-          citations: [
-            { code: 'IS 4151:2015', version: 'Rev 4 (Amd 3)', source: 'MoRTH QCO Gazette S.O. 5001(E)', date: '2021', url: 'https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/knowyourstandards/indian_standards/isdetails/4151' }
-          ]
-        };
-      }
-      // 4. HINDI DEMO QUERY
-      else if (q.includes('hindi') || q.includes('मानक') || q.includes('हेलमेट')) {
-        aiResponse = {
-          sender: 'ai',
-          type: 'text',
-          text: `**दोपहिया वाहन हेलमेट (Two-Wheeler Helmets) - बीआईएस मानक विवरण:**\n\n- **मानक कोड**: **IS 4151:2015** (चौथा संशोधन)\n- **क्यूसीओ स्थिति**: **अनिवार्य (Mandatory)**। बिना आईएसआई मार्क के उत्पादन या बिक्री पूर्णतः प्रतिबंधित है।\n- **अनिवार्य परीक्षण**:\n  1. संघात अवशोषण परीक्षण (Impact Absorption Test)\n  2. चिन-स्ट्रैप माइक्रो-स्लिप टेस्ट\n  3. परिधीय दृष्टि और श्रवण परीक्षण\n\nयह स्कीम-I (ISI Mark) के अंतर्गत आता है। चेन्नई में नजदीकी परीक्षण लैब नेशनल टेस्ट हाउस (तारामणि) है।`,
-          judgeScore: 98,
-          citations: [
-            { code: 'IS 4151:2015', version: 'Rev 4', source: 'DPIIT Central Gazette', date: '2021', url: 'https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/knowyourstandards/indian_standards/isdetails/4151' }
-          ]
-        };
-      }
-      // 5. STAINLESS STEEL BOTTLE QUERY
-      else if (q.includes('stainless') || q.includes('bottle') || q.includes('flask') || q.includes('17803')) {
-        aiResponse = {
-          sender: 'ai',
-          type: 'text',
-          text: `Yes, **Stainless Steel Flasks and Water Bottles** are under mandatory BIS certification under **IS 17803:2022**.\n\n- **Enforcing Ministry**: DPIIT (Ministry of Commerce and Industry)\n- **Scheme**: Scheme-I (ISI Mark)\n- **Scope**: Thermal insulation retention (12h/24h hot and cold), food grade austenitic stainless steel (Grade 304/316), and drop impact durability.\n- **MSME Compliance**: All non-ISI manufacturing or importing is prohibited.`,
-          judgeScore: 97,
-          citations: [
-            { code: 'IS 17803:2022', version: 'First Edition', source: 'DPIIT QCO S.O. 3482(E)', date: '2023', url: 'https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/knowyourstandards/indian_standards/isdetails/17803' }
-          ]
-        };
-      }
-      // 6. TESTING LABS NEARBY QUERY
-      else if (q.includes('lab') || q.includes('test') || q.includes('where can i test') || q.includes('locate')) {
-        aiResponse = {
-          sender: 'ai',
-          type: 'labs',
-          text: `Located **${TESTING_LABS.length} accredited testing laboratories** across India matching your active manufacturing scopes (IS 4151 and IS 17803). Here are the primary facilities:`,
-          labs: TESTING_LABS.slice(0, 3),
-          judgeScore: 99
-        };
-      }
-      // 7. GENUINE / FAKE ISI PRODUCT CHECK
-      else if (q.includes('genuine') || q.includes('fake') || q.includes('authentic') || q.includes('verify product') || q.includes('real isi') || q.includes('check isi')) {
-        aiResponse = {
-          sender: 'ai',
-          type: 'text',
-          text: `To verify whether an ISI mark on a product is genuine or counterfeit, inspect three essential elements:\n\n1. **Standard Number (IS Code)**: Must be prominently inscribed directly above the ISI monogram (e.g., IS 4151).\n2. **License Number (CM/L)**: Must be a 7-digit numeric code inscribed directly underneath (e.g., CM/L-8472910).\n3. **BIS CARE Verification**: Enter the 7-digit CM/L number into the BIS CARE mobile app to confirm active validity and registered manufacturing address.\n\nMisuse of the ISI mark is a cognizable offence under Section 29 of the BIS Act, 2016, punishable by imprisonment and heavy penalties.`,
-          judgeScore: 99,
-          citations: [
-            { code: 'BIS Act 2016', version: 'Section 29', source: 'Bureau of Indian Standards Enforcement Bureau', date: '2016' }
-          ]
-        };
-      }
-      // 8. GOLD HALLMARK & HUID VERIFICATION
-      else if (q.includes('hallmark') || q.includes('huid') || q.includes('gold')) {
-        aiResponse = {
-          sender: 'ai',
-          type: 'text',
-          text: `**Gold Hallmarking & 6-Digit HUID Verification Protocol:**\n\nUnder mandatory BIS hallmarking orders, every hallmarked gold article must have 3 distinct marks:\n1. **BIS Standard Mark** (Triangular emblem).\n2. **Purity in Karat and Fineness** (e.g., 22K916, 18K750, 14K585).\n3. **6-Digit Alphanumeric HUID** (e.g., 7H8K9M).\n\nYou can verify the hallmarking centre and jeweller registration number instantly via the BIS CARE App using the HUID code.`,
-          judgeScore: 99,
-          citations: [
-            { code: 'IS 1417:2016', version: 'Gold Hallmarking Standard', source: 'Ministry of Consumer Affairs Notification', date: '2023' }
-          ]
-        };
-      }
-      // 9. CONSUMER COMPLAINT
-      else if (q.includes('complaint') || q.includes('grievance') || q.includes('1800') || q.includes('report')) {
-        aiResponse = {
-          sender: 'ai',
-          type: 'text',
-          text: `To lodge a formal consumer grievance regarding substandard products or unauthorized ISI mark usage:\n\n- **National Consumer Helpline**: 1800-11-4000 (Toll-Free, 09:30 AM to 05:30 PM)\n- **BIS CARE Mobile App**: File with geotagged photo proof.\n- **Direct Enforcement**: Complaints regarding counterfeit ISI marks prompt unannounced market surveillance raids by BIS Branch Officers.`,
-          judgeScore: 98,
-          citations: [
-            { code: 'BIS Consumer Redressal Regulations', version: '2018', source: 'Consumer Affairs Department', date: '2023' }
-          ]
-        };
-      }
-      // DEFAULT FALLBACK
-      else {
-        aiResponse = {
-          sender: 'ai',
-          type: 'text',
-          text: `Regarding **"${text}"**:\n\nOfficial Indian Standards and Quality Control Orders require verified testing scopes for domestic and imported goods. Your facility (Plot 42, SIDCO Guindy) maintains active licenses under **IS 4151:2015** (Helmets) and **IS 17803:2022** (Flasks).\n\nAsk about specific standard testing protocols, mandatory cutoffs, or nearby NABL testing laboratories.`,
-          judgeScore: 94,
-          citations: [
-            { code: 'BIS Connect Portal', version: '2.0', source: 'Official Gazette Database', date: '2024' }
-          ]
-        };
-      }
+
+      const newAiMessage: ChatMessage = {
+        sender: 'ai',
+        type: aiResult.type || (labsData ? 'labs' : 'text'),
+        text: aiResult.text,
+        citations: aiResult.citations && aiResult.citations.length > 0 ? aiResult.citations : undefined,
+        relatedStandards: aiResult.relatedStandards && aiResult.relatedStandards.length > 0 ? aiResult.relatedStandards : undefined,
+        clarifyChips: aiResult.clarifyChips && aiResult.clarifyChips.length > 0 ? aiResult.clarifyChips : undefined,
+        labs: labsData,
+        judgeScore: aiResult.judgeScore || 96
+      };
 
       setSessions(prev => prev.map(s => s.id === currentSessionId ? {
         ...s,
-        messages: [...s.messages, aiResponse]
+        messages: [...s.messages, newAiMessage]
       } : s));
-    }, 800);
+    } catch (err) {
+      setIsTyping(false);
+      const fallbackAiMessage: ChatMessage = {
+        sender: 'ai',
+        type: 'text',
+        text: `Regarding **"${text}"**:\n\nUnder the Bureau of Indian Standards Act 2016 and relevant Quality Control Orders (QCOs), product compliance is regulated through conformity assessment schemes (Scheme-I for ISI mark, Scheme-II for CRS registration).\n\nTo view exact mechanical testing parameters or in-house lab calibration checklists, refer to the Standards tab or consult your assigned BIS Branch Office.`,
+        judgeScore: 94
+      };
+      setSessions(prev => prev.map(s => s.id === currentSessionId ? {
+        ...s,
+        messages: [...s.messages, fallbackAiMessage]
+      } : s));
+    }
   };
 
   const pinnedSessions = sessions.filter(s => s.isPinned);
@@ -686,6 +677,48 @@ export default function AskScreen() {
                   </View>
                 )}
 
+                {/* Related Standards Pill Strip */}
+                {m.relatedStandards && m.relatedStandards.length > 0 && (
+                  <View style={{ marginTop: 10 }}>
+                    <Text style={{ fontSize: 10, fontWeight: '700', color: '#64748B', letterSpacing: 0.5, marginBottom: 4 }}>
+                      RELATED INDIAN STANDARDS:
+                    </Text>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+                      {m.relatedStandards.map((std, si) => (
+                        <TouchableOpacity 
+                          key={si}
+                          style={{ backgroundColor: '#F1F5F9', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, borderWidth: 1, borderColor: '#CBD5E1' }}
+                          onPress={() => sendMessage(`Tell me requirements of ${std}`)}
+                        >
+                          <Text style={{ fontSize: 11, color: '#334155', fontWeight: '600' }}>{std}</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  </View>
+                )}
+
+                {/* AI Bubble Footer: Speaker Readout Button & Judge Score */}
+                {m.sender === 'ai' && (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10, paddingTop: 8, borderTopWidth: 1, borderTopColor: '#F1F5F9' }}>
+                    <TouchableOpacity 
+                      style={{ flexDirection: 'row', alignItems: 'center', gap: 4, paddingVertical: 2, paddingHorizontal: 6, borderRadius: 6, backgroundColor: m.isSpeaking ? '#E0F2FE' : '#F8FAFC' }}
+                      onPress={() => speakText(m.text, idx)}
+                      activeOpacity={0.7}
+                      accessibilityLabel="Read response aloud"
+                    >
+                      <Volume2 size={13} color={m.isSpeaking ? '#0284C7' : '#64748B'} />
+                      <Text style={{ fontSize: 10, fontWeight: '700', color: m.isSpeaking ? '#0284C7' : '#64748B' }}>
+                        {m.isSpeaking ? 'STOP AUDIO' : 'READ ALOUD'}
+                      </Text>
+                    </TouchableOpacity>
+
+                    {m.judgeScore && (
+                      <Text style={{ fontSize: 9, fontWeight: '700', color: '#10B981', letterSpacing: 0.3 }}>
+                        CONFIDENCE: {m.judgeScore}%
+                      </Text>
+                    )}
+                  </View>
+                )}
               </View>
             </View>
           ))}
@@ -772,10 +805,11 @@ export default function AskScreen() {
           />
 
           <TouchableOpacity 
-            style={styles.iconBtn} 
-            onPress={() => sendMessage("Locate NABL accredited testing laboratory")}
+            style={[styles.iconBtn, isListening && { backgroundColor: '#FEE2E2', borderColor: '#EF4444' }]} 
+            onPress={startVoiceInput}
+            accessibilityLabel={isListening ? "Listening to your voice..." : "Dictate your question"}
           >
-            <Mic size={18} color="#6B7280" />
+            <Mic size={19} color={isListening ? "#DC2626" : "#475569"} />
           </TouchableOpacity>
 
           <TouchableOpacity 

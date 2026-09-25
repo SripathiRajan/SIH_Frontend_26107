@@ -37,6 +37,13 @@ export default function HomeScreen() {
   const { t } = useLanguage();
   const [showNotifications, setShowNotifications] = useState(false);
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       
@@ -46,9 +53,8 @@ export default function HomeScreen() {
           <View style={styles.avatar}>
             <Text style={styles.avatarText}>SR</Text>
           </View>
-          <View>
-            <Text style={styles.greetingTitle}>{t('greeting_title')}</Text>
-            <Text style={styles.greetingSub}>{t('greeting_sub')}</Text>
+            <Text style={styles.greetingTitle}>{getGreeting()}, Sripathi</Text>
+            <Text style={styles.greetingSub}>{t('greeting_sub') || 'BIS Licensee Dashboard'}</Text>
           </View>
         </View>
 

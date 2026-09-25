@@ -257,6 +257,45 @@ export default function ProfileScreen() {
                 </View>
               );
             })}
+
+            {/* Step-by-Step Licensing Procedure Card for MSMEs/Startups */}
+            <View style={{ backgroundColor: '#F8FAFC', borderRadius: 12, padding: 16, borderWidth: 1, borderColor: '#CBD5E1', marginTop: 8 }}>
+              <Text style={{ fontSize: 13, fontWeight: '800', color: '#0F172A', marginBottom: 4 }}>
+                LICENSING PROCEDURE (HOW TO APPLY)
+              </Text>
+              <Text style={{ fontSize: 11, color: '#64748B', lineHeight: 16, marginBottom: 12 }}>
+                Standard 6-step conformity assessment procedure under Scheme-I for MSMEs & new manufacturers:
+              </Text>
+
+              <View style={{ gap: 8 }}>
+                {[
+                  { step: '1', title: 'Determine Applicable IS Code', desc: 'Identify product standard and mandatory QCO notifications' },
+                  { step: '2', title: 'Setup In-House Testing Laboratory', desc: 'Install calibration test equipment specified in Scheme of Inspection & Testing (SIT)' },
+                  { step: '3', title: 'Submit Online Application on Manakonline', desc: 'Fill Form-V, upload factory layout, manufacturing process & fee receipt' },
+                  { step: '4', title: 'Preliminary Factory Audit by BIS Officer', desc: 'On-site technical evaluation of quality control systems and in-house testing' },
+                  { step: '5', title: 'Sample Testing in Recognized Lab', desc: 'Factory samples sealed & sent to NABL/BIS lab (e.g. NTH) for independent clearance' },
+                  { step: '6', title: 'Grant of CM/L License & ISI Marking', desc: 'Official license issued with unique 7-8 digit CM/L number for product marking' },
+                ].map((item, idx) => (
+                  <View key={idx} style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start' }}>
+                    <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: '#0D9488', alignItems: 'center', justifyContent: 'center', marginTop: 1 }}>
+                      <Text style={{ color: '#FFFFFF', fontSize: 10, fontWeight: '800' }}>{item.step}</Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ fontSize: 12, fontWeight: '700', color: '#1E293B' }}>{item.title}</Text>
+                      <Text style={{ fontSize: 10, color: '#64748B' }}>{item.desc}</Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
+
+              <TouchableOpacity 
+                style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: '#0D9488', borderRadius: 8, paddingVertical: 10, marginTop: 14 }}
+                onPress={() => Linking.openURL('https://www.manakonline.in/')}
+              >
+                <Text style={{ color: '#FFFFFF', fontSize: 12, fontWeight: '700' }}>Apply Online on Manakonline Portal</Text>
+                <ArrowUpRight size={13} color="#FFFFFF" />
+              </TouchableOpacity>
+            </View>
           </View>
         )}
 
