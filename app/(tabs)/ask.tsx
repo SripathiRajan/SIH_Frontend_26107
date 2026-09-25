@@ -47,7 +47,7 @@ export default function AskScreen() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       sender: 'ai',
-      text: "Hi there 👋 I'm your Praman assistant. Ask anything about Indian Standards (IS), ISI mark certification, QCO mandates, or testing labs — in plain language or Tanglish.\n\nEvery response is parallel-retrieved from official BIS gazettes, DPIIT QCOs, and verified via our Judge Layer.",
+      text: "Hi, I'm your Praman assistant. Ask anything about Indian Standards (IS), ISI mark certification, QCO mandates, or testing labs — in plain language or Tanglish.\n\nEvery response is parallel-retrieved from official BIS gazettes, DPIIT QCOs, and verified via our Judge Layer.",
       type: 'text'
     }
   ]);
@@ -313,7 +313,7 @@ export default function AskScreen() {
                     {/* Amber boundary disclaimer */}
                     <View style={styles.vlmDisclaimer}>
                       <Text style={styles.vlmDisclaimerText}>
-                        ⚠️ Assistive only. We assist, BIS authenticates — confirm via the official BIS Care app.
+                        Assistive only. We assist, BIS authenticates — confirm via the official BIS Care app.
                       </Text>
                     </View>
                   </View>
@@ -428,7 +428,7 @@ export default function AskScreen() {
               style={[styles.chip, { backgroundColor: '#F0FDFA', borderColor: '#CCFBF1' }]}
               onPress={() => sendMessage("Tell me helmet standard in Tamil and Tanglish")}
             >
-              <Text style={[styles.chipText, { color: '#0F766E', fontWeight: '600' }]}>🗣️ Tamil & Tanglish Demo</Text>
+              <Text style={[styles.chipText, { color: '#0F766E', fontWeight: '600' }]}>Tamil & Tanglish Demo</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -438,7 +438,7 @@ export default function AskScreen() {
           <TouchableOpacity 
             style={styles.iconBtn} 
             onPress={handleVlmCapture}
-            title="Inspect Hallmark or Certificate with VLM"
+            accessibilityLabel="Inspect Hallmark or Certificate with VLM"
           >
             <Camera size={20} color="#0D9488" />
           </TouchableOpacity>

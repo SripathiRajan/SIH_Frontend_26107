@@ -39,7 +39,7 @@ export default function HomeScreen() {
             style={styles.bellBtn} 
             onPress={() => router.push('/settings')}
             activeOpacity={0.7}
-            title="Settings"
+            accessibilityLabel="Settings"
           >
             <Settings size={18} color="#64748B" />
           </TouchableOpacity>

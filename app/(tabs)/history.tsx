@@ -34,7 +34,7 @@ export default function HistoryScreen() {
       title: 'BIS Helmet License Verification (CM/L-8472910)',
       sub: 'Hash 0x8F94...B104-BIS-OK verified on central ledger',
       date: '18-Aug-2024',
-      badge: 'Authenticated ✓',
+      badge: 'Authenticated',
       badgeColor: '#059669',
       badgeBg: '#ECFDF5'
     }
