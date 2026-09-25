@@ -9,6 +9,8 @@ export interface Standard {
   version: string;
   scope: string;
   testParams: string[];
+  sourceUrl?: string;
+  relatedStandards?: string[];
 }
 
 export interface Lab {
@@ -48,7 +50,9 @@ export const BIS_STANDARDS: Standard[] = [
     applicableScheme: 'Scheme-I (ISI Mark)',
     version: 'Revision 4 (with Amd 1, 2, 3 - 2021)',
     scope: 'Mandatory impact attenuation, retention system integrity, and peripheral vision thresholds for protective helmets.',
-    testParams: ['Impact absorption (Rigid anvil)', 'Chin strap micro-slip', 'Audibility & Vision field']
+    testParams: ['Impact absorption (Rigid anvil)', 'Chin strap micro-slip', 'Audibility & Vision field'],
+    sourceUrl: 'https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/knowyourstandards/indian_standards/isdetails/4151',
+    relatedStandards: ['IS 9815 (Visors for protective helmets)', 'IS 7293 (Safety code for motor vehicle operators)', 'IS 14221 (Motorcycle eye protectors)']
   },
   {
     id: 'is-17803',
@@ -60,7 +64,9 @@ export const BIS_STANDARDS: Standard[] = [
     applicableScheme: 'Scheme-I (ISI Mark)',
     version: 'First Edition (2022)',
     scope: 'Thermal insulation retention (12h/24h), drop impact durability, and food grade austenitic stainless steel (Grade 304/316).',
-    testParams: ['Thermal retention vacuum test', 'Food contact chemical migration', 'Drop leakage resistance']
+    testParams: ['Thermal retention vacuum test', 'Food contact chemical migration', 'Drop leakage resistance'],
+    sourceUrl: 'https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/knowyourstandards/indian_standards/isdetails/17803',
+    relatedStandards: ['IS 6911 (Stainless steel plate, sheet & strip)', 'IS 10146 (Polyethylene for food contact)', 'IS 9845 (Specific migration test)']
   },
   {
     id: 'is-1293',
@@ -72,7 +78,9 @@ export const BIS_STANDARDS: Standard[] = [
     applicableScheme: 'Scheme-I (ISI Mark)',
     version: 'Fourth Edition (2019)',
     scope: 'Mandatory household and commercial plug/socket protection against electric shock, abnormal temperature rise, and glowing wire ignition.',
-    testParams: ['Insulation resistance', 'Temperature rise under continuous load', 'Glow wire heat test']
+    testParams: ['Insulation resistance', 'Temperature rise under continuous load', 'Glow wire heat test'],
+    sourceUrl: 'https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/knowyourstandards/indian_standards/isdetails/1293',
+    relatedStandards: ['IS 302-1 (General electrical safety)', 'IS 694 (PVC insulated electrical cables)', 'IS 60884-1 (Plugs and socket outlets)']
   },
   {
     id: 'is-1417',
@@ -84,7 +92,9 @@ export const BIS_STANDARDS: Standard[] = [
     applicableScheme: 'Hallmarking Scheme (6-Digit HUID)',
     version: 'Fifth Revision (Mandatory HUID 2021)',
     scope: 'Mandates 3 authentic signs: BIS Logo, Fineness in Karat (e.g. 22K916), and 6-digit alphanumeric laser-inscribed HUID code.',
-    testParams: ['Fire assay cupellation', 'XRF spectrometry', '6-digit laser inscription']
+    testParams: ['Fire assay cupellation', 'XRF spectrometry', '6-digit laser inscription'],
+    sourceUrl: 'https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/knowyourstandards/indian_standards/isdetails/1417',
+    relatedStandards: ['IS 2112 (Silver and silver alloys fineness)', 'IS 15820 (Assaying & Hallmarking centres)', 'IS 1418 (Fire assay test)']
   },
   {
     id: 'is-16046',
@@ -96,7 +106,9 @@ export const BIS_STANDARDS: Standard[] = [
     applicableScheme: 'Compulsory Registration Scheme (CRS)',
     version: 'Part 2 (2018)',
     scope: 'Safety requirements for portable sealed secondary lithium cells and batteries for consumer electronics and electric mobility.',
-    testParams: ['Continuous charging safety', 'External short circuit test', 'Free fall impact']
+    testParams: ['Continuous charging safety', 'External short circuit test', 'Free fall impact'],
+    sourceUrl: 'https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/knowyourstandards/indian_standards/isdetails/16046',
+    relatedStandards: ['IS 13252-1 (Information technology equipment safety)', 'IS 16047 (Lithium primary batteries)', 'IS 62133-2 (Secondary cells for portable applications)']
   },
   {
     id: 'is-1786',
@@ -108,7 +120,9 @@ export const BIS_STANDARDS: Standard[] = [
     applicableScheme: 'Scheme-I (ISI Mark)',
     version: 'Fourth Revision (2018)',
     scope: 'Mechanical specifications for Fe 415, Fe 500, Fe 550 and Fe 600 grades for seismic and civil infrastructure.',
-    testParams: ['Tensile proof stress yield', 'Elongation at rupture', 'Bend and rebend ductility']
+    testParams: ['Tensile proof stress yield', 'Elongation at rupture', 'Bend and rebend ductility'],
+    sourceUrl: 'https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/knowyourstandards/indian_standards/isdetails/1786',
+    relatedStandards: ['IS 456 (Plain and reinforced concrete code)', 'IS 13920 (Ductile design of reinforced concrete structures)', 'IS 1608 (Mechanical tensile testing of metallic materials)']
   }
 ];
 
@@ -358,3 +372,85 @@ export const TODAYS_BRIEF = [
     source: 'BIS Central Operations'
   }
 ];
+
+export interface BisService {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  eligibility: string;
+  features: string[];
+  link: string;
+  iconName: string;
+  badge: string;
+}
+
+export const BIS_SERVICES: BisService[] = [
+  {
+    id: 'service-clubs',
+    title: 'Standards Clubs in Schools & Colleges',
+    category: 'Youth & Academia',
+    description: 'Promotes standardization culture and consumer rights awareness among students through learning-by-doing initiatives, laboratory visits, and science projects.',
+    eligibility: 'Educational Institutions (Schools & Colleges)',
+    features: ['BIS Financial grant up to ₹10,000/year', 'Mentorship by certified BIS Officers', 'Hands-on quality testing workshops'],
+    link: 'https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/standard-clubs/',
+    iconName: 'GraduationCap',
+    badge: 'Academic Scheme'
+  },
+  {
+    id: 'service-nits',
+    title: 'NITS Training Programmes',
+    category: 'Capacity Building',
+    description: 'National Institute of Training for Standardization provides specialized training for industry professionals, MSMEs, consumer organizations, and international participants.',
+    eligibility: 'MSMEs, Industry Professionals, Regulators, Students',
+    features: ['ISO/IEC 17025 Lead Auditor training', 'Sector-specific technical standards courses', 'E-learning and on-campus certifications'],
+    link: 'https://www.services.bis.gov.in/php/BIS_2.0/training/',
+    iconName: 'Award',
+    badge: 'Professional Dev'
+  },
+  {
+    id: 'service-isi',
+    title: 'Conformity Assessment & ISI Certification',
+    category: 'Industry & Manufacturing',
+    description: 'Grant of BIS licence for use of the prestigious Standard Mark (ISI mark) under Scheme-I, ensuring compliance with Indian Standards for domestic and foreign manufacturers.',
+    eligibility: 'Domestic Manufacturers, Importers (FMCS Scheme)',
+    features: ['Over 1000+ products under mandatory certification', 'Surveillance audits & random market sampling', 'Digital e-BIS portal submission'],
+    link: 'https://www.services.bis.gov.in/php/BIS_2.0/dgasp/index.php',
+    iconName: 'ShieldCheck',
+    badge: 'Licensing'
+  },
+  {
+    id: 'service-lrs',
+    title: 'Laboratory Recognition Scheme (LRS)',
+    category: 'Testing & Calibration',
+    description: 'Empanelment of independent commercial and government laboratories for testing third-party samples against Indian Standards in conformity with ISO/IEC 17025.',
+    eligibility: 'NABL-accredited Testing & Calibration Labs',
+    features: ['Official empanelment for BIS surveillance sample testing', 'Automated sample assignment via e-BIS', 'Pan-India network of accredited labs'],
+    link: 'https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/lab-recognition/',
+    iconName: 'FlaskConical',
+    badge: 'Testing Labs'
+  },
+  {
+    id: 'service-consumer',
+    title: 'Consumer Affairs & Grievance Redressal',
+    category: 'Citizen Services',
+    description: 'Dedicated consumer protection mechanism to report misuse of ISI mark, un-hallmarked gold jewelry, substandard products, and consumer complaints.',
+    eligibility: 'All Citizens & Consumers',
+    features: ['Toll-free National Helpline: 1800-11-4000', 'Direct surveillance raid initiation for spurious marks', 'Legal redressal under BIS Act 2016'],
+    link: 'https://www.services.bis.gov.in/php/BIS_2.0/dgasp/consumer_grievance.php',
+    iconName: 'AlertCircle',
+    badge: 'Consumer Protection'
+  },
+  {
+    id: 'service-biscare',
+    title: 'BIS CARE App & Verification Portal',
+    category: 'Digital Verification',
+    description: 'Empowers citizens to verify ISI mark licences, hallmarked jewellery (6-digit HUID code), CRS registration numbers, and lodge geotagged complaints in real time.',
+    eligibility: 'General Public (Android & iOS)',
+    features: ['Verify ISI licence number on products', 'HUID hallmarked gold authenticity check', 'CRS electronics registration lookup'],
+    link: 'https://play.google.com/store/apps/details?id=com.bis.bis_care',
+    iconName: 'Smartphone',
+    badge: 'Mobile App'
+  }
+];
+

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Tabs } from 'expo-router';
 import { Platform } from 'react-native';
-import { ShieldCheck, MessageSquare, FileCheck2, Building2, UserCheck } from 'lucide-react-native';
+import { ShieldCheck, MessageSquare, FileCheck2, Building2, UserCheck, LayoutGrid } from 'lucide-react-native';
 import { Colors } from '../../constants/theme';
 
 export default function TabLayout() {
@@ -50,6 +50,13 @@ export default function TabLayout() {
         options={{
           title: 'Standards & QCO',
           tabBarIcon: ({ color }) => <FileCheck2 size={22} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="services"
+        options={{
+          title: 'Services',
+          tabBarIcon: ({ color }) => <LayoutGrid size={22} color={color} />,
         }}
       />
       <Tabs.Screen

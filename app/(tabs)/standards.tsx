@@ -7,13 +7,15 @@ import {
   TextInput, 
   TouchableOpacity, 
   SafeAreaView,
-  Modal
+  Modal,
+  Linking
 } from 'react-native';
 import { 
   Search, 
   AlertTriangle, 
   ChevronRight, 
   ArrowRight,
+  ExternalLink,
   X
 } from 'lucide-react-native';
 import { BIS_STANDARDS, CATEGORIES } from '../../services/mockData';
@@ -50,7 +52,9 @@ export default function StandardsScreen() {
         scheme: matched.applicableScheme,
         ministry: 'Ministry of Heavy Industries & DPIIT',
         gazette: matched.version,
-        tests: matched.testParams.join(', ')
+        tests: matched.testParams.join(', '),
+        sourceUrl: matched.sourceUrl,
+        relatedStandards: matched.relatedStandards
       });
     } else {
       setResult({
@@ -60,7 +64,9 @@ export default function StandardsScreen() {
         scheme: 'Scheme-I / Scheme-IV',
         ministry: 'BIS Standards Promotion Council',
         gazette: 'Consult latest gazette amendment',
-        tests: 'General chemical purity & dimensional endurance'
+        tests: 'General chemical purity & dimensional endurance',
+        sourceUrl: 'https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/knowyourstandards/indian_standards/',
+        relatedStandards: []
       });
     }
   };
@@ -77,7 +83,9 @@ export default function StandardsScreen() {
         scheme: matched.applicableScheme,
         ministry: 'Central Government Gazette',
         gazette: matched.version,
-        tests: matched.testParams.join(', ')
+        tests: matched.testParams.join(', '),
+        sourceUrl: matched.sourceUrl,
+        relatedStandards: matched.relatedStandards
       });
     }
   };
@@ -148,6 +156,56 @@ export default function StandardsScreen() {
               <Text style={styles.extraLabel}>Mandatory Testing Scope:</Text>
               <Text style={styles.extraVal}>{result.tests}</Text>
             </View>
+
+            {/* Link to Official BIS Standard Registry */}
+            {result.sourceUrl && (
+              <TouchableOpacity 
+                style={styles.sourceUrlBtn}
+                onPress={() => Linking.openURL(result.sourceUrl)}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.sourceUrlBtnText}>Open Official BIS Standard Registry Page</Text>
+                <ExternalLink size={13} color="#0D9488" />
+              </TouchableOpacity>
+            )}
+
+            {/* Related Standards Cross-Reference */}
+            {result.relatedStandards && result.relatedStandards.length > 0 && (
+              <View style={styles.relatedBox}>
+                <Text style={styles.relatedHeading}>RELATED & CROSS-REFERENCED STANDARDS</Text>
+                <View style={styles.relatedChipsRow}>
+                  {result.relatedStandards.map((std: string, idx: number) => (
+                    <TouchableOpacity 
+                      key={idx}
+                      style={styles.relatedChip}
+                      onPress={() => {
+                        const parts = std.split(' ');
+                        const isCode = parts.slice(0, 2).join(' ');
+                        setQuery(isCode);
+                        const matchedStd = BIS_STANDARDS.find(s => s.isNumber.toLowerCase().includes(isCode.toLowerCase()));
+                        if (matchedStd) {
+                          setResult({
+                            product: matchedStd.title,
+                            isNumber: matchedStd.isNumber,
+                            status: matchedStd.qcoStatus.toUpperCase() + ' (ISI Scheme-I)',
+                            scheme: matchedStd.applicableScheme,
+                            ministry: 'Ministry of Heavy Industries & DPIIT',
+                            gazette: matchedStd.version,
+                            tests: matchedStd.testParams.join(', '),
+                            sourceUrl: matchedStd.sourceUrl,
+                            relatedStandards: matchedStd.relatedStandards
+                          });
+                        }
+                      }}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={styles.relatedChipText}>{std}</Text>
+                      <ArrowRight size={11} color="#0D9488" />
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            )}
           </View>
         )}
 
@@ -407,6 +465,57 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#0F172A',
     marginBottom: 4,
+  },
+  sourceUrlBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    backgroundColor: '#F0FDFA',
+    borderWidth: 1,
+    borderColor: '#99F6E4',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+  },
+  sourceUrlBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0D9488',
+  },
+  relatedBox: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    padding: 10,
+    gap: 6,
+  },
+  relatedHeading: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#64748B',
+    letterSpacing: 0.5,
+  },
+  relatedChipsRow: {
+    gap: 6,
+  },
+  relatedChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+  },
+  relatedChipText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#1E293B',
+    flex: 1,
   },
 
   // Jurisdiction Card

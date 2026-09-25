@@ -6,7 +6,8 @@ import {
   ScrollView, 
   TouchableOpacity, 
   SafeAreaView,
-  Modal
+  Modal,
+  Linking
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { 
@@ -16,7 +17,8 @@ import {
   ArrowRight,
   Settings,
   X,
-  ExternalLink
+  ExternalLink,
+  Phone
 } from 'lucide-react-native';
 import { TODAYS_BRIEF } from '../../services/mockData';
 
@@ -175,6 +177,65 @@ export default function HomeScreen() {
               <Text style={styles.cardSubtitle}>Find accredited test facilities by product and city</Text>
               <ChevronRight size={16} color="#CBD5E1" style={styles.chevronPos} />
             </TouchableOpacity>
+
+            {/* Card 4: BIS Services & Programmes */}
+            <TouchableOpacity 
+              style={styles.actionCard}
+              onPress={() => router.push('/(tabs)/services')}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.cardMainTitle}>BIS Services & Programmes</Text>
+              <Text style={styles.cardSubtitle}>Standards Clubs, NITS training, LRS lab scheme & certification</Text>
+              <ChevronRight size={16} color="#CBD5E1" style={styles.chevronPos} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* 5. Citizen & Consumer Corner */}
+        <View style={styles.consumerSection}>
+          <Text style={styles.sectionHeader}>Consumer Protection & Grievance Corner</Text>
+          
+          <View style={styles.consumerCard}>
+            <View style={styles.consumerCardHeader}>
+              <View style={styles.consumerIconBox}>
+                <Phone size={18} color="#0D9488" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.consumerCardTitle}>National Consumer Helpline</Text>
+                <Text style={styles.consumerCardPhone}>1800-11-4000 (Toll-Free)</Text>
+              </View>
+              <TouchableOpacity 
+                style={styles.callBtn}
+                onPress={() => Linking.openURL('tel:1800114000')}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.callBtnText}>Call Now</Text>
+              </TouchableOpacity>
+            </View>
+
+            <Text style={styles.consumerCardDesc}>
+              Report spurious ISI marks, substandard goods, or gold jewellery sold without mandatory 6-digit HUID code directly to BIS enforcement.
+            </Text>
+
+            <View style={styles.consumerLinksRow}>
+              <TouchableOpacity 
+                style={styles.consumerLinkBtn}
+                onPress={() => Linking.openURL('https://www.services.bis.gov.in/php/BIS_2.0/dgasp/consumer_grievance.php')}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.consumerLinkText}>BIS Grievance Portal</Text>
+                <ExternalLink size={11} color="#0D9488" />
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={styles.consumerLinkBtn}
+                onPress={() => Linking.openURL('https://play.google.com/store/apps/details?id=com.bis.bis_care')}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.consumerLinkText}>Download BIS CARE App</Text>
+                <ExternalLink size={11} color="#0D9488" />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
 
@@ -482,6 +543,78 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 14,
     top: 18,
+  },
+
+  // Consumer Section
+  consumerSection: {
+    gap: 10,
+    marginTop: 4,
+  },
+  consumerCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#CCFBF1',
+    padding: 16,
+    gap: 10,
+  },
+  consumerCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  consumerIconBox: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F0FDFA',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#99F6E4',
+  },
+  consumerCardTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  consumerCardPhone: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0D9488',
+  },
+  callBtn: {
+    backgroundColor: '#0D9488',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+  },
+  callBtnText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  consumerCardDesc: {
+    fontSize: 11,
+    color: '#64748B',
+    lineHeight: 16,
+  },
+  consumerLinksRow: {
+    flexDirection: 'row',
+    gap: 12,
+    paddingTop: 4,
+    borderTopWidth: 1,
+    borderTopColor: '#F1F5F9',
+  },
+  consumerLinkBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  consumerLinkText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#0D9488',
   },
 
   // Modal

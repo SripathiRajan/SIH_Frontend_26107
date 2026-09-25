@@ -34,7 +34,7 @@ interface ChatMessage {
   sender: 'user' | 'ai';
   text: string;
   type?: 'text' | 'labs' | 'vlm' | 'clarify' | 'rejection' | 'file_upload';
-  citations?: Array<{ code: string; version: string; source: string; date: string }>;
+  citations?: Array<{ code: string; version: string; source: string; date: string; url?: string }>;
   relatedStandards?: string[];
   judgeScore?: number;
   clarifyChips?: string[];
@@ -190,7 +190,7 @@ export default function AskScreen() {
             text: `**இருசக்கர வாகன தலைக்கவசம் (Two-Wheeler Helmet) - BIS Standard விவரங்கள்:**\n\n- **Standard Code**: **IS 4151:2015** (Revision 4 with Amendments 1, 2, 3)\n- **QCO Status**: **Mandatory (கட்டாயம்)**. ISI Mark இல்லாமல் இந்தியாவில் ஹெல்மெட் உற்பத்தி செய்யவோ அல்லது விற்கவோ தடை விதிக்கப்பட்டுள்ளது.\n- **முக்கிய பரிசோதனைகள் (Mandatory Tests)**:\n  1. Impact Absorption Test (தாக்கத்தை உறிஞ்சும் சோதனை)\n  2. Retention System (தாடை பட்டை நழுவாமல் இருக்கும் உறுதி)\n  3. Peripheral Vision & Audibility (பார்வை மற்றும் கேட்கும் திறன்)\n\n**Tanglish Summary**: Neenga two-wheeler helmet manufacture panreenga na, **IS 4151:2015** Scheme-I keezha compulsory **ISI Mark license** edukkanum. Nearby NABL testing facility: NTH Taramani Chennai (4.8 km).`,
             judgeScore: 97,
             citations: [
-              { code: 'IS 4151:2015', version: 'Rev 4 (Amd 3)', source: 'MoRTH QCO Gazette S.O. 5001(E)', date: '2021' }
+              { code: 'IS 4151:2015', version: 'Rev 4 (Amd 3)', source: 'MoRTH QCO Gazette S.O. 5001(E)', date: '2021', url: 'https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/knowyourstandards/indian_standards/isdetails/4151' }
             ]
           }
         ]);
@@ -207,7 +207,7 @@ export default function AskScreen() {
             text: `**दोपहिया वाहन हेलमेट (Two-Wheeler Helmets) - बीआईएस मानक विवरण:**\n\n- **मानक कोड**: **IS 4151:2015** (चौथा संशोधन)\n- **क्यूसीओ स्थिति**: **अनिवार्य (Mandatory)**। बिना आईएसआई मार्क के उत्पादन या बिक्री पूर्णतः प्रतिबंधित है।\n- **अनिवार्य परीक्षण**:\n  1. संघात अवशोषण परीक्षण (Impact Absorption Test)\n  2. चिन-स्ट्रैप माइक्रो-स्लिप टेस्ट\n  3. परिधीय दृष्टि और श्रवण परीक्षण\n\nयह स्कीम-I (ISI Mark) के अंतर्गत आता है। चेन्नई में नजदीकी परीक्षण लैब नेशनल टेस्ट हाउस (तारामणि) है।`,
             judgeScore: 98,
             citations: [
-              { code: 'IS 4151:2015', version: 'Rev 4', source: 'DPIIT Central Gazette', date: '2021' }
+              { code: 'IS 4151:2015', version: 'Rev 4', source: 'DPIIT Central Gazette', date: '2021', url: 'https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/knowyourstandards/indian_standards/isdetails/4151' }
             ]
           }
         ]);
@@ -224,7 +224,7 @@ export default function AskScreen() {
             text: `Yes, **Stainless Steel Flasks and Water Bottles** are under mandatory BIS certification under **IS 17803:2022**.\n\n- **Enforcing Ministry**: DPIIT (Ministry of Commerce and Industry)\n- **Scheme**: Scheme-I (ISI Mark)\n- **Scope**: Thermal insulation retention (12h/24h hot and cold), food grade austenitic stainless steel (Grade 304/316), and drop impact durability.\n- **MSME Compliance**: All non-ISI manufacturing or importing is prohibited.`,
             judgeScore: 97,
             citations: [
-              { code: 'IS 17803:2022', version: 'First Edition', source: 'DPIIT QCO S.O. 3482(E)', date: '2023' }
+              { code: 'IS 17803:2022', version: 'First Edition', source: 'DPIIT QCO S.O. 3482(E)', date: '2023', url: 'https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/knowyourstandards/indian_standards/isdetails/17803' }
             ]
           }
         ]);
@@ -246,7 +246,58 @@ export default function AskScreen() {
         return;
       }
 
-      // 7. DEFAULT RESPONSE
+      // 7. GENUINE / FAKE ISI PRODUCT CHECK
+      if (q.includes('genuine') || q.includes('fake') || q.includes('authentic') || q.includes('verify product') || q.includes('real isi') || q.includes('check isi')) {
+        setMessages(prev => [
+          ...prev,
+          {
+            sender: 'ai',
+            type: 'text',
+            text: `**How to verify if an ISI-marked product is genuine:**\n\n1. **Check 7-8 Digit CM/L Number**: Every authentic ISI mark MUST have a valid License (CM/L) number inscribed directly under the monogram.\n2. **Verify on BIS CARE App**: Enter the CM/L number into the official BIS CARE app or on services.bis.gov.in to check real-time license validity, manufacturer name, and factory location.\n3. **Inspect Standard Code**: The applicable IS code (e.g. IS 4151 for helmets) must be clearly printed above the ISI monogram.\n4. **Report Misuse**: If the CM/L number is invalid or missing, it is a criminal offence under Section 29 of the BIS Act 2016.`,
+            judgeScore: 98,
+            citations: [
+              { code: 'BIS Act 2016 (Section 29)', version: 'Product Certification Scheme-I', source: 'BIS Guidelines on Standard Mark Misuse', date: '2024', url: 'https://www.services.bis.gov.in/php/BIS_2.0/dgasp/index.php' }
+            ]
+          }
+        ]);
+        return;
+      }
+
+      // 8. CONSUMER COMPLAINTS & GRIEVANCE REDRESSAL
+      if (q.includes('complaint') || q.includes('complain') || q.includes('grievance') || q.includes('fraud') || q.includes('helpline') || q.includes('non-isi')) {
+        setMessages(prev => [
+          ...prev,
+          {
+            sender: 'ai',
+            type: 'text',
+            text: `**Consumer Grievance Redressal & Complaint Filing:**\n\nIf you find substandard goods, fake ISI marks, or non-hallmarked gold:\n\n- **National Toll-Free Helpline**: **1800-11-4000** (Mon–Sat, 9:00 AM – 5:30 PM)\n- **Online Portal**: Lodge complaint directly on the BIS Grievance Portal\n- **BIS CARE App**: File geotagged complaints with product photos and shop location\n- **Email Support**: complaints@bis.gov.in / consumer@bis.gov.in\n- **Legal Action**: BIS enforcement officers conduct raid & search operations upon consumer complaints under Section 30 of the BIS Act.`,
+            judgeScore: 99,
+            citations: [
+              { code: 'Consumer Affairs Guidelines', version: 'BIS Act 2016 Regulations', source: 'BIS Consumer Affairs Department', date: '2024', url: 'https://www.services.bis.gov.in/php/BIS_2.0/dgasp/consumer_grievance.php' }
+            ]
+          }
+        ]);
+        return;
+      }
+
+      // 9. GOLD HALLMARKING & HUID VERIFICATION
+      if (q.includes('hallmark') || q.includes('huid') || q.includes('gold') || q.includes('jewel') || q.includes('22k') || q.includes('916')) {
+        setMessages(prev => [
+          ...prev,
+          {
+            sender: 'ai',
+            type: 'text',
+            text: `**Mandatory Gold Hallmarking & 6-Digit HUID Verification:**\n\nUnder government notification, all 14k, 18k, and 22k gold jewellery sold in India must bear 3 authentic marks:\n\n1. **BIS Standard Logo** (Triangular emblem)\n2. **Purity / Fineness Grade**: e.g., 22K916 (91.6% purity), 18K750, 14K585\n3. **6-Digit Alphanumeric HUID**: Laser-inscribed Unique Identification Code\n\n**To verify your jewellery:**\nOpen the **BIS CARE App** -> Click **Verify HUID** -> Enter the 6-digit code. It displays jeweller name, assaying centre, and registration status immediately.`,
+            judgeScore: 99,
+            citations: [
+              { code: 'IS 1417:2016', version: 'Mandatory HUID 2021', source: 'Ministry of Consumer Affairs Notification', date: '2021', url: 'https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/knowyourstandards/indian_standards/isdetails/1417' }
+            ]
+          }
+        ]);
+        return;
+      }
+
+      // 10. DEFAULT RESPONSE
       setMessages(prev => [
         ...prev,
         {
@@ -352,6 +403,14 @@ export default function AskScreen() {
                       <View key={ci} style={styles.citationItem}>
                         <Text style={styles.citationCode}>{c.code} · {c.version}</Text>
                         <Text style={styles.citationSource}>{c.source} ({c.date})</Text>
+                        <TouchableOpacity 
+                          style={styles.citationLinkBtn}
+                          onPress={() => Linking.openURL(c.url || 'https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/knowyourstandards/indian_standards/')}
+                          activeOpacity={0.7}
+                        >
+                          <Text style={styles.citationLinkText}>View on BIS Portal</Text>
+                          <ExternalLink size={10} color="#0D9488" />
+                        </TouchableOpacity>
                       </View>
                     ))}
                   </View>
@@ -425,6 +484,27 @@ export default function AskScreen() {
             onPress={() => sendMessage("Where can I test my product near me? Locate NABL lab")}
           >
             <Text style={styles.chipText}>Locate NABL testing lab near me</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.chip}
+            onPress={() => sendMessage("How to verify if an ISI product is genuine or fake?")}
+          >
+            <Text style={styles.chipText}>Verify genuine vs fake ISI mark</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.chip}
+            onPress={() => sendMessage("How to check gold hallmark and 6-digit HUID code?")}
+          >
+            <Text style={styles.chipText}>Gold hallmark & HUID verification</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.chip}
+            onPress={() => sendMessage("How to file consumer complaint or grievance to BIS?")}
+          >
+            <Text style={styles.chipText}>Lodge consumer complaint (1800-11-4000)</Text>
           </TouchableOpacity>
 
           <TouchableOpacity 
@@ -839,6 +919,17 @@ const styles = StyleSheet.create({
   citationSource: {
     fontSize: 10,
     color: '#64748B',
+  },
+  citationLinkBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 4,
+  },
+  citationLinkText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#0D9488',
   },
   clarifyBox: {
     gap: 6,
