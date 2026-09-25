@@ -5,36 +5,21 @@ import {
   ArrowLeft, 
   Globe, 
   Bell, 
-  FolderLock, 
   Lock, 
   LogOut, 
-  ChevronRight, 
   CheckCircle2, 
   RefreshCw,
-  ShieldCheck,
-  Smartphone
+  Settings
 } from 'lucide-react-native';
+import { Colors, Shadows } from '../../constants/theme';
+import { useLanguage, LANGUAGES } from '../../context/LanguageContext';
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const [selectedLanguage, setSelectedLanguage] = useState<
-    'English' | 'हिन्दी' | 'தமிழ்' | 'मराठी' | 'বাংলা' | 'ଓଡ଼ିଆ' | 'ಕನ್ನಡ' | 'తెలుగు' | 'Tanglish'
-  >('English');
+  const { language, setLanguage, t } = useLanguage();
   const [gazetteAlerts, setGazetteAlerts] = useState(true);
   const [auditReminders, setAuditReminders] = useState(true);
   const [offlineSyncDone, setOfflineSyncDone] = useState(false);
-
-  const LANGUAGES = [
-    'English',
-    'हिन्दी',
-    'தமிழ்',
-    'मराठी',
-    'বাংলা',
-    'ଓଡ଼ିଆ',
-    'ಕನ್ನಡ',
-    'తెలుగు',
-    'Tanglish'
-  ] as const;
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -43,8 +28,10 @@ export default function SettingsScreen() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn} activeOpacity={0.7}>
           <ArrowLeft size={20} color="#0F172A" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Settings & Preferences</Text>
-        <View style={{ width: 20 }} />
+        <Text style={styles.headerTitle}>{t('settings_title')}</Text>
+        <View style={styles.settingsBtn}>
+          <Settings size={18} color="#1565C0" />
+        </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -52,29 +39,32 @@ export default function SettingsScreen() {
         {/* 1. Language & Dialect Section */}
         <View style={styles.card}>
           <View style={styles.cardHeader}>
-            <Globe size={18} color="#4338CA" />
-            <Text style={styles.cardTitle}>App Language & Interface Dialect</Text>
+            <Globe size={18} color="#1565C0" />
+            <Text style={styles.cardTitle}>{t('app_language_title')}</Text>
           </View>
           <Text style={styles.cardSub}>
-            Sets the default app display language. (In chatbot, multi-lingual questions in Hindi, Marathi, Odia, Bengali, Tamil, Kannada, etc., are auto-detected automatically).
+            {t('app_language_sub')}
           </Text>
 
           <View style={styles.langGrid}>
-            {LANGUAGES.map((lang) => (
-              <TouchableOpacity 
-                key={lang} 
-                style={[styles.langBtn, selectedLanguage === lang && styles.langBtnActive]}
-                onPress={() => setSelectedLanguage(lang)}
-                activeOpacity={0.8}
-              >
-                <Text style={[styles.langBtnText, selectedLanguage === lang && styles.langBtnTextActive]}>
-                  {lang}
-                </Text>
-                {selectedLanguage === lang && (
-                  <CheckCircle2 size={13} color="#FFFFFF" style={{ marginLeft: 4 }} />
-                )}
-              </TouchableOpacity>
-            ))}
+            {LANGUAGES.map((lang) => {
+              const isSelected = language === lang.code;
+              return (
+                <TouchableOpacity 
+                  key={lang.code} 
+                  style={[styles.langBtn, isSelected && styles.langBtnActive]}
+                  onPress={() => setLanguage(lang.code)}
+                  activeOpacity={0.8}
+                >
+                  <Text style={[styles.langBtnText, isSelected && styles.langBtnTextActive]}>
+                    {lang.nativeName}
+                  </Text>
+                  {isSelected && (
+                    <CheckCircle2 size={13} color="#FFFFFF" style={{ marginLeft: 4 }} />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
 
@@ -82,31 +72,31 @@ export default function SettingsScreen() {
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <Bell size={18} color="#0D9488" />
-            <Text style={styles.cardTitle}>Notification Preferences</Text>
+            <Text style={styles.cardTitle}>{t('notifications_title')}</Text>
           </View>
 
           <View style={styles.toggleRow}>
             <View style={{ flex: 1, marginRight: 12 }}>
-              <Text style={styles.toggleLabel}>QCO Gazette Mandate Alerts</Text>
-              <Text style={styles.toggleSub}>Instant push alert when DPIIT/MoRTH issues new standards</Text>
+              <Text style={styles.toggleLabel}>{t('gazette_alerts')}</Text>
+              <Text style={styles.toggleSub}>{t('gazette_alerts_sub')}</Text>
             </View>
             <Switch 
               value={gazetteAlerts} 
               onValueChange={setGazetteAlerts}
-              trackColor={{ false: '#E2E8F0', true: '#0D9488' }}
+              trackColor={{ false: '#E2E8F0', true: '#1565C0' }}
               thumbColor="#FFFFFF"
             />
           </View>
 
           <View style={[styles.toggleRow, { borderBottomWidth: 0, paddingBottom: 0 }]}>
             <View style={{ flex: 1, marginRight: 12 }}>
-              <Text style={styles.toggleLabel}>Surveillance Audit Reminders</Text>
-              <Text style={styles.toggleSub}>Reminders 14 days before CNBO factory inspections</Text>
+              <Text style={styles.toggleLabel}>{t('audit_reminders')}</Text>
+              <Text style={styles.toggleSub}>{t('audit_reminders_sub')}</Text>
             </View>
             <Switch 
               value={auditReminders} 
               onValueChange={setAuditReminders}
-              trackColor={{ false: '#E2E8F0', true: '#0D9488' }}
+              trackColor={{ false: '#E2E8F0', true: '#1565C0' }}
               thumbColor="#FFFFFF"
             />
           </View>
@@ -179,6 +169,16 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#0F172A',
   },
+  settingsBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    backgroundColor: '#EFF6FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   scrollContent: {
     padding: 20,
     paddingBottom: 40,
@@ -188,9 +188,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    borderRadius: 20,
+    borderRadius: 14,
     padding: 18,
     gap: 12,
+    ...Shadows.sm,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -222,7 +223,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   langBtnActive: {
-    backgroundColor: '#312E81',
+    backgroundColor: '#1565C0',
+    ...Shadows.sm,
   },
   langBtnText: {
     fontSize: 12,

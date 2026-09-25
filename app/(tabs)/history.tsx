@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Clock, CheckCircle2, MessageSquare, ChevronRight, FileText } from 'lucide-react-native';
+import { Colors, Shadows } from '../../constants/theme';
 
 export default function HistoryScreen() {
   const router = useRouter();
@@ -96,7 +97,7 @@ export default function HistoryScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FAFAFA',
+    backgroundColor: '#F8FAFC',
   },
   scrollContent: {
     padding: 16,
@@ -109,11 +110,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: '800',
-    color: '#111827',
+    color: '#0F172A',
   },
   subtitle: {
     fontSize: 12,
-    color: '#6B7280',
+    color: '#64748B',
     marginTop: 4,
   },
   filters: {
@@ -123,22 +124,23 @@ const styles = StyleSheet.create({
   filterChip: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: '#E2E8F0',
     borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
   filterChipActive: {
-    backgroundColor: '#312E81',
-    borderColor: '#312E81',
+    backgroundColor: Colors.primaryMuted,
+    borderColor: Colors.primary,
   },
   filterText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#4B5563',
+    color: '#475569',
   },
   filterTextActive: {
-    color: '#FFFFFF',
+    color: Colors.primary,
+    fontWeight: '700',
   },
   list: {
     gap: 12,
@@ -146,10 +148,11 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 16,
+    borderColor: '#E2E8F0',
+    borderRadius: 14,
     padding: 16,
     gap: 6,
+    ...Shadows.sm,
   },
   cardTop: {
     flexDirection: 'row',
@@ -167,16 +170,16 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: 10,
-    color: '#9CA3AF',
+    color: '#94A3B8',
   },
   cardTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#111827',
+    color: '#0F172A',
   },
   cardSub: {
     fontSize: 11,
-    color: '#6B7280',
+    color: '#64748B',
     lineHeight: 16,
   },
 });

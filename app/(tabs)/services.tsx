@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   Linking
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import {
   GraduationCap,
   Award,
@@ -15,57 +16,89 @@ import {
   FlaskConical,
   AlertCircle,
   Smartphone,
-  ExternalLink,
   Phone,
   Mail,
-  CheckCircle2,
-  ChevronRight,
-  Sparkles
+  ArrowUpRight,
+  Settings
 } from 'lucide-react-native';
 import { BIS_SERVICES, BisService } from '../../services/mockData';
+import { Colors, Shadows } from '../../constants/theme';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function ServicesScreen() {
+  const router = useRouter();
+  const { t } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
-  const categories = ['All', 'Industry & Manufacturing', 'Youth & Academia', 'Capacity Building', 'Testing & Calibration', 'Citizen Services', 'Digital Verification'];
+  const categories = [
+    'All',
+    'Industry and manufacturing',
+    'Youth and academia',
+    'Capacity building',
+    'Testing and calibration',
+    'Citizen services',
+    'Digital verification'
+  ];
 
   const filteredServices = selectedCategory === 'All'
     ? BIS_SERVICES
-    : BIS_SERVICES.filter(s => s.category === selectedCategory);
+    : BIS_SERVICES.filter(s => {
+        const catNorm = s.category.toLowerCase().replace(/&/g, 'and').trim();
+        const selNorm = selectedCategory.toLowerCase().replace(/&/g, 'and').trim();
+        return catNorm === selNorm;
+      });
 
   const renderServiceIcon = (iconName: string) => {
     switch (iconName) {
       case 'GraduationCap':
-        return <GraduationCap size={22} color="#0D9488" />;
+        return <GraduationCap size={20} color="#111827" />;
       case 'Award':
-        return <Award size={22} color="#0D9488" />;
+        return <Award size={20} color="#111827" />;
       case 'ShieldCheck':
-        return <ShieldCheck size={22} color="#0D9488" />;
+        return <ShieldCheck size={20} color="#111827" />;
       case 'FlaskConical':
-        return <FlaskConical size={22} color="#0D9488" />;
+        return <FlaskConical size={20} color="#111827" />;
       case 'AlertCircle':
-        return <AlertCircle size={22} color="#0D9488" />;
+        return <AlertCircle size={20} color="#111827" />;
       case 'Smartphone':
-        return <Smartphone size={22} color="#0D9488" />;
+        return <Smartphone size={20} color="#111827" />;
       default:
-        return <ShieldCheck size={22} color="#0D9488" />;
+        return <ShieldCheck size={20} color="#111827" />;
     }
+  };
+
+  const getCleanTitle = (title: string) => {
+    return title.replace('&', 'and');
+  };
+
+  const getCleanCategory = (cat: string) => {
+    return cat.replace('&', 'and');
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <View style={styles.header}>
+      {/* Fixed Top Header Panel with Top Right Settings Button */}
+      <View style={styles.topHeader}>
+        <View style={{ flex: 1, gap: 4, paddingRight: 12 }}>
           <View style={styles.headerBadge}>
-            <Sparkles size={12} color="#0D9488" />
-            <Text style={styles.headerBadgeText}>OFFICIAL BIS PROGRAMMES & SCHEMES</Text>
+            <Text style={styles.headerBadgeText}>{t('services_badge')}</Text>
           </View>
-          <Text style={styles.title}>Bureau of Indian Standards Services</Text>
+          <Text style={styles.title}>{t('services_title')}</Text>
           <Text style={styles.subtitle}>
-            Explore key government initiatives across product certification, Standards Clubs in academia, professional NITS training, NABL lab empanelment, and consumer affairs.
+            {t('services_sub')}
           </Text>
         </View>
+        <TouchableOpacity 
+          style={styles.settingsBtn}
+          onPress={() => router.push('/settings')}
+          activeOpacity={0.7}
+          accessibilityLabel="Settings"
+        >
+          <Settings size={18} color="#475569" />
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
         {/* Category Horizontal Filter */}
         <ScrollView
@@ -98,54 +131,58 @@ export default function ServicesScreen() {
 
         {/* Services List */}
         <View style={styles.servicesList}>
-          {filteredServices.map((service: BisService) => (
-            <View key={service.id} style={styles.serviceCard}>
-              {/* Card Top Row */}
-              <View style={styles.cardTopRow}>
-                <View style={styles.iconContainer}>
-                  {renderServiceIcon(service.iconName)}
+          {filteredServices.map((service: BisService) => {
+            return (
+              <View key={service.id} style={styles.serviceCard}>
+                {/* Card Top Row */}
+                <View style={styles.cardTopRow}>
+                  <View style={styles.cardHeaderLeft}>
+                    <View style={styles.iconContainer}>
+                      {renderServiceIcon(service.iconName)}
+                    </View>
+                    <Text style={styles.serviceTitle}>{getCleanTitle(service.title)}</Text>
+                  </View>
+                  <View style={styles.badgeGroup}>
+                    <View style={styles.categoryBadge}>
+                      <Text style={styles.categoryBadgeText}>{getCleanCategory(service.category)}</Text>
+                    </View>
+                    <View style={styles.statusBadge}>
+                      <Text style={styles.statusBadgeText}>{service.badge}</Text>
+                    </View>
+                  </View>
                 </View>
-                <View style={styles.badgeGroup}>
-                  <View style={styles.categoryBadge}>
-                    <Text style={styles.categoryBadgeText}>{service.category}</Text>
-                  </View>
-                  <View style={styles.statusBadge}>
-                    <Text style={styles.statusBadgeText}>{service.badge}</Text>
-                  </View>
+
+                {/* Description */}
+                <Text style={styles.serviceDesc}>{service.description}</Text>
+
+                {/* Eligibility Strip */}
+                <View style={styles.eligibilityBox}>
+                  <Text style={styles.eligibilityLabel}>{t('target_eligibility')}</Text>
+                  <Text style={styles.eligibilityValue}>{service.eligibility.replace('&', 'and')}</Text>
                 </View>
+
+                {/* Key Features */}
+                <View style={styles.featuresList}>
+                  {service.features.map((feature: string, fIdx: number) => (
+                    <View key={fIdx} style={styles.featureItem}>
+                      <Text style={styles.checkMark}>✓</Text>
+                      <Text style={styles.featureText}>{feature}</Text>
+                    </View>
+                  ))}
+                </View>
+
+                {/* Action Button */}
+                <TouchableOpacity
+                  style={styles.actionBtn}
+                  onPress={() => Linking.openURL(service.link)}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.actionBtnText}>{t('open_scheme_portal')}</Text>
+                  <ArrowUpRight size={14} color="#FFFFFF" />
+                </TouchableOpacity>
               </View>
-
-              {/* Title & Description */}
-              <Text style={styles.serviceTitle}>{service.title}</Text>
-              <Text style={styles.serviceDesc}>{service.description}</Text>
-
-              {/* Eligibility Strip */}
-              <View style={styles.eligibilityBox}>
-                <Text style={styles.eligibilityLabel}>TARGET ELIGIBILITY:</Text>
-                <Text style={styles.eligibilityValue}>{service.eligibility}</Text>
-              </View>
-
-              {/* Key Features */}
-              <View style={styles.featuresList}>
-                {service.features.map((feature: string, fIdx: number) => (
-                  <View key={fIdx} style={styles.featureItem}>
-                    <CheckCircle2 size={13} color="#0D9488" style={{ marginTop: 2 }} />
-                    <Text style={styles.featureText}>{feature}</Text>
-                  </View>
-                ))}
-              </View>
-
-              {/* Action Button */}
-              <TouchableOpacity
-                style={styles.actionBtn}
-                onPress={() => Linking.openURL(service.link)}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.actionBtnText}>Open Official Scheme Portal</Text>
-                <ExternalLink size={13} color="#FFFFFF" />
-              </TouchableOpacity>
-            </View>
-          ))}
+            );
+          })}
         </View>
 
         {/* Central Assistance & Support Card */}
@@ -196,8 +233,31 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     gap: 16,
   },
+  topHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
+  },
   header: {
-    gap: 6,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  settingsBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerBadge: {
     flexDirection: 'row',
@@ -244,8 +304,8 @@ const styles = StyleSheet.create({
     borderColor: '#E2E8F0',
   },
   categoryChipActive: {
-    backgroundColor: '#0F172A',
-    borderColor: '#0F172A',
+    backgroundColor: Colors.primaryMuted,
+    borderColor: Colors.primary,
   },
   categoryChipText: {
     fontSize: 11,
@@ -253,18 +313,20 @@ const styles = StyleSheet.create({
     color: '#475569',
   },
   categoryChipTextActive: {
-    color: '#FFFFFF',
+    color: Colors.primary,
+    fontWeight: '700',
   },
   servicesList: {
     gap: 14,
   },
   serviceCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1,
     borderColor: '#E2E8F0',
     padding: 16,
     gap: 10,
+    ...Shadows.sm,
   },
   cardTopRow: {
     flexDirection: 'row',
@@ -321,17 +383,17 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   eligibilityBox: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#F0F9FF',
     borderRadius: 8,
     padding: 10,
     borderWidth: 1,
-    borderColor: '#F1F5F9',
+    borderColor: '#BAE6FD',
     gap: 2,
   },
   eligibilityLabel: {
     fontSize: 9,
     fontWeight: '800',
-    color: '#64748B',
+    color: '#0284C7',
     letterSpacing: 0.5,
   },
   eligibilityValue: {
@@ -343,10 +405,22 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingVertical: 2,
   },
+  cardHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    flex: 1,
+    marginRight: 8,
+  },
+  checkMark: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0F172A',
+    marginRight: 6,
+  },
   featureItem: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 8,
+    alignItems: 'center',
   },
   featureText: {
     fontSize: 11,
@@ -359,10 +433,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: '#0F172A',
+    backgroundColor: Colors.primary,
     borderRadius: 8,
     paddingVertical: 11,
     marginTop: 4,
+    ...Shadows.sm,
   },
   actionBtnText: {
     fontSize: 12,
@@ -370,13 +445,14 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   helpCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    backgroundColor: '#F0FDFA',
+    borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#CCFBF1',
+    borderColor: '#99F6E4',
     padding: 16,
     gap: 10,
     marginTop: 4,
+    ...Shadows.sm,
   },
   helpTitle: {
     fontSize: 14,

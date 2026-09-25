@@ -41,10 +41,13 @@
 7. **Version-Aware Citations & Related Standards Panel:**
    - Every claim is cited with its standard AND amendment year: `IS 4151:2015 · Amd 2021`.
    - Displays a structured **Related Standards Panel** (e.g. test methods `IS 16993` & `IS 2925`).
-8. **Multi-Lingual & Tanglish / Hinglish:**
-   - Toggle button for English, தமிழ், Tanglish, and हिन्दी in chat header. Includes pre-loaded Tanglish scenario.
-9. **DPDP Act 2023 Privacy Panel:**
-   - Prominently featured in `app/(tabs)/profile.tsx` — certifying zero training on proprietary manufacturing blueprints and automated data purge.
+8. **Global Multi-Lingual Architecture (10 Indian Languages):**
+   - Horizontal pill bar with active blue selection and checkmark: English, हिन्दी, தமிழ், తెలుగు, ಕನ್ನಡ, മലയാളം, मराठी, বাংলা, ଓଡ଼ିଆ, ગુજરાતી.
+   - Global context sync across all screens, tab titles, and headers.
+9. **Praman AI Slide Bar Drawer:**
+   - Full slide bar drawer to manage chat sessions with Rename, Delete, and Pin/Unpin actions.
+10. **Top-Right Settings Access:**
+   - Ubiquitous settings button accessible across every screen in the application.
 
 ---
 
@@ -52,13 +55,14 @@
 
 | File Path | Reference Image | Features |
 |---|---|---|
-| `app/(tabs)/home.tsx` | **Image 1** | Dark Location/Context card (`Chennai · Tamil Nadu`), Red QCO Alert strip, 2×2 Bento Grid (`Ask Praman`, `QCO checker`, `Document vault`, `Find Testing Lab`), Today's Brief news feed. |
-| `app/(tabs)/ask.tsx` | **Image 2** | Yellow trust banner, Assistant header, prompt chips, agentic map cards, VLM checklist, clarifier chips, voice mic button, Tanglish switcher. |
-| `app/(tabs)/standards.tsx` | **Image 3** | Standards & QCO search input, Solid Deep Indigo button, result card, Geofence locked card, Offline warning alert, 2×2 category cards (`Speed & helmets`, `Safety gear`, `Electrical`, `Food & water`). |
-| `app/(tabs)/map.tsx` | **Map Screen** | Directory of BIS-recognized & NABL-accredited laboratories with test scopes and Google Maps links. |
-| `app/(tabs)/profile.tsx` | **Image 4** | User header card, `0 Open non-compliances` \| `3 Certificates in Vault` metrics row, menu list with Country/State, Document vault, DPDP Act 2023 panel. |
-| `app/vault/index.tsx` | **Document Vault** | Upload drop zone, OCR extracted fields, license numbers, validity, and legal verification hash. |
-| `app/(tabs)/history.tsx` | **History** | Chronological audit trail of past queries, application stepper, and verification receipts. |
+| `app/(tabs)/index.tsx` | **Dashboard** | Context card, QCO Alert, Bento Grid, Today's Brief news feed, Top-Right Settings button, Multilingual Pill Bar. |
+| `app/(tabs)/ask.tsx` | **Praman AI** | Slide bar drawer for chat session management (Rename/Delete/Pin), Multilingual Pill Bar, Top-Right Settings button, citations, and NABL testing protocols. |
+| `app/(tabs)/standards.tsx` | **Standards** | Standards & QCO search input, jurisdiction switcher, 8 technical divisions, Multilingual Pill Bar, Top-Right Settings button. |
+| `app/(tabs)/services.tsx` | **Services** | Official BIS programmes and schemes, target eligibility, portal links, Top-Right Settings button, Multilingual Pill Bar. |
+| `app/(tabs)/map.tsx` | **NABL Labs** | Directory of BIS-recognized & NABL-accredited laboratories with test scopes, Google Maps links, Top-Right Settings button, Multilingual Pill Bar. |
+| `app/(tabs)/profile.tsx` | **Enterprise** | Enterprise Credentials, BIS Officer details, Surveillance audits, Top-Right Settings button, Multilingual Pill Bar. |
+| `app/vault/index.tsx` | **Document Vault** | Upload drop zone, OCR extracted fields, license numbers, validity, Top-Right Settings button, Multilingual Pill Bar. |
+| `app/settings/index.tsx` | **Settings** | Complete app dialect configuration (10 Indian languages), push notification preferences, DPDP compliance. |
 
 ---
 

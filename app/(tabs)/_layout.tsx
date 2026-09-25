@@ -1,76 +1,112 @@
 import React from 'react';
-
 import { Tabs } from 'expo-router';
-import { Platform } from 'react-native';
-import { ShieldCheck, MessageSquare, FileCheck2, Building2, UserCheck, LayoutGrid } from 'lucide-react-native';
-import { Colors } from '../../constants/theme';
+import { Platform, View, TouchableOpacity } from 'react-native';
+import { MessageSquare, ClipboardList, Grid, User } from 'lucide-react-native';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function TabLayout() {
+  const { t } = useLanguage();
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#0D9488', // Mint Teal active indicator
-        tabBarInactiveTintColor: '#64748B', // Slate muted
+        tabBarActiveTintColor: '#1565C0',
+        tabBarInactiveTintColor: '#6B7280',
         tabBarStyle: {
           backgroundColor: '#FFFFFF',
-          borderTopColor: '#E2E8F0',
-          height: Platform.OS === 'web' ? 64 : 68,
-          paddingBottom: Platform.OS === 'web' ? 8 : 12,
-          paddingTop: 8,
-          shadowColor: '#1E1B4B',
+          borderTopColor: '#F1F5F9',
+          borderTopWidth: 1,
+          height: Platform.OS === 'web' ? 70 : 74,
+          paddingBottom: Platform.OS === 'web' ? 6 : 10,
+          paddingTop: 6,
+          paddingHorizontal: 8,
+          shadowColor: '#0F172A',
           shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: 0.05,
-          shadowRadius: 10,
-          elevation: 4,
+          shadowOpacity: 0.03,
+          shadowRadius: 6,
+          elevation: 2,
         },
         tabBarLabelStyle: {
-          fontSize: 10,
+          fontSize: 11,
           fontWeight: '700',
-          letterSpacing: 0.2,
+          marginTop: 2,
+        },
+        tabBarButton: (props: any) => {
+          const focused = props.accessibilityState?.selected;
+          return (
+            <TouchableOpacity
+              {...props}
+              activeOpacity={0.8}
+              style={[
+                props.style,
+                {
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginHorizontal: 3,
+                  marginVertical: 4,
+                  paddingVertical: 5,
+                  borderRadius: 12,
+                  backgroundColor: focused ? '#EBF5FF' : 'transparent',
+                },
+              ]}
+            >
+              {props.children}
+            </TouchableOpacity>
+          );
         },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Dashboard',
-          tabBarIcon: ({ color }) => <ShieldCheck size={22} color={color} />,
+          title: t('tab_dashboard'),
+          tabBarIcon: ({ color }) => (
+            <View style={{ width: 17, height: 17, borderWidth: 1.8, borderColor: color, borderRadius: 2, alignItems: 'center', justifyContent: 'center' }}>
+              <View style={{ width: 7, height: 7, backgroundColor: color, borderRadius: 1 }} />
+            </View>
+          ),
         }}
       />
       <Tabs.Screen
         name="ask"
         options={{
-          title: 'Praman AI',
-          tabBarIcon: ({ color }) => <MessageSquare size={22} color={color} />,
+          title: t('tab_praman_ai'),
+          tabBarIcon: ({ color }) => <MessageSquare size={19} color={color} />,
         }}
       />
       <Tabs.Screen
         name="standards"
         options={{
-          title: 'Standards & QCO',
-          tabBarIcon: ({ color }) => <FileCheck2 size={22} color={color} />,
+          title: t('tab_standards'),
+          tabBarIcon: ({ color }) => <ClipboardList size={19} color={color} />,
         }}
       />
       <Tabs.Screen
         name="services"
         options={{
-          title: 'Services',
-          tabBarIcon: ({ color }) => <LayoutGrid size={22} color={color} />,
+          title: t('tab_services'),
+          tabBarIcon: ({ color }) => (
+            <View style={{ width: 17, height: 17, borderWidth: 1.8, borderColor: color, borderRadius: 2, alignItems: 'center', justifyContent: 'center' }}>
+              <View style={{ position: 'absolute', width: 9, height: 1.8, backgroundColor: color }} />
+              <View style={{ position: 'absolute', width: 1.8, height: 9, backgroundColor: color }} />
+            </View>
+          ),
         }}
       />
       <Tabs.Screen
         name="map"
         options={{
-          title: 'NABL Labs',
-          tabBarIcon: ({ color }) => <Building2 size={22} color={color} />,
+          title: t('tab_nabl_labs'),
+          tabBarIcon: ({ color }) => <Grid size={19} color={color} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Enterprise',
-          tabBarIcon: ({ color }) => <UserCheck size={22} color={color} />,
+          title: t('tab_enterprise'),
+          tabBarIcon: ({ color }) => <User size={19} color={color} />,
         }}
       />
       {/* Hidden legacy tab names */}

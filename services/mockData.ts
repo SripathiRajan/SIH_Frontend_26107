@@ -131,28 +131,28 @@ export const TESTING_LABS: Lab[] = [
   // South Region (Tamil Nadu - Current Location Hub)
   {
     id: 'lab-nth-chennai',
-    name: 'National Test House (Southern Region)',
+    name: 'National test house (Southern region)',
     city: 'Chennai',
     state: 'Tamil Nadu',
     region: 'South',
     isCurrentLocation: true,
     distance: '4.8 km from Guindy facility',
-    accreditation: 'NABL TC-5034 · BIS Recognized',
-    scope: ['Motorcycle Helmets (IS 4151)', 'Stainless Steel Flasks (IS 17803)', 'Pipes & Fittings'],
+    accreditation: 'NABL TC-5034 · BIS recognized',
+    scope: ['Motorcycle helmets (IS 4151)', 'Stainless steel flasks (IS 17803)', 'Pipes and fittings'],
     productCodes: ['IS 4151', 'IS 17803'],
     contact: '+91 44 2254 1234',
     address: 'CIT Campus, IV Cross Road, Taramani, Chennai - 600113'
   },
   {
     id: 'lab-cecri-chennai',
-    name: 'CSIR-Central Electrochemical Research Institute Unit',
+    name: 'CSIR-Central Electrochemical Research Institute unit',
     city: 'Chennai',
     state: 'Tamil Nadu',
     region: 'South',
     isCurrentLocation: true,
     distance: '5.2 km from Guindy facility',
-    accreditation: 'BIS Recognized Central Laboratory',
-    scope: ['Lithium-Ion Batteries (IS 16046)', 'Metal Corrosion Testing', 'Chemical Metallurgy'],
+    accreditation: 'BIS recognized central laboratory',
+    scope: ['Lithium-ion batteries (IS 16046)', 'Metal corrosion testing', 'Chemical metallurgy'],
     productCodes: ['IS 16046', 'IS 17803'],
     contact: '+91 44 2254 2061',
     address: 'CSIR Madras Complex, Taramani, Chennai - 600113'
@@ -166,7 +166,7 @@ export const TESTING_LABS: Lab[] = [
     isCurrentLocation: true,
     distance: '14.2 km from Guindy facility',
     accreditation: 'NABL ISO/IEC 17025',
-    scope: ['Protective Helmets (IS 4151)', 'Plugs & Sockets (IS 1293)', 'Automotive Components'],
+    scope: ['Protective helmets (IS 4151)', 'Plugs and sockets (IS 1293)', 'Automotive components'],
     productCodes: ['IS 4151', 'IS 1293'],
     contact: '+91 44 4296 5555',
     address: 'Ambattur Industrial Estate, Chennai - 600058'
@@ -287,58 +287,58 @@ export const CATEGORIES = [
   { 
     id: 'cat-med', 
     code: 'MED', 
-    name: 'Mechanical Engineering Division', 
+    name: 'Mechanical engineering division', 
     count: 2840,
     scope: 'Protective helmets, pressure vessels, machine tools, automotive systems'
   },
   { 
     id: 'cat-chd', 
     code: 'CHD', 
-    name: 'Chemical & Materials Division', 
+    name: 'Chemical and materials division', 
     count: 2410,
-    scope: 'Stainless steel flasks, polymers, glass containers, paints & coatings'
+    scope: 'Stainless steel flasks, polymers, glass containers, paints and coatings'
   },
   { 
     id: 'cat-etd', 
     code: 'ETD', 
-    name: 'Electrotechnical Division', 
+    name: 'Electrotechnical division', 
     count: 1950,
-    scope: 'Plugs & sockets, secondary lithium batteries, cables, power transformers'
+    scope: 'Plugs and sockets, secondary lithium batteries, cables, power transformers'
   },
   { 
     id: 'cat-litd', 
     code: 'LITD', 
-    name: 'Electronics & Information Technology', 
+    name: 'Electronics and information technology', 
     count: 820,
     scope: 'Smart meters, LED luminaires, biometric devices, IT equipment (CRS)'
   },
   { 
     id: 'cat-ced', 
     code: 'CED', 
-    name: 'Civil Engineering Division', 
+    name: 'Civil engineering division', 
     count: 3120,
     scope: 'Cement, structural steel, building hardware, fire fighting apparatus'
   },
   { 
     id: 'cat-fad', 
     code: 'FAD', 
-    name: 'Food & Agriculture Division', 
+    name: 'Food and agriculture division', 
     count: 1480,
     scope: 'Packaged drinking water, infant dairy nutrition, food packaging'
   },
   { 
     id: 'cat-txd', 
     code: 'TXD', 
-    name: 'Textiles & PPE Division', 
+    name: 'Textiles and PPE division', 
     count: 1260,
     scope: 'Protective industrial clothing, technical textiles, geotextiles'
   },
   { 
     id: 'cat-mtd', 
     code: 'MTD', 
-    name: 'Metallurgical Engineering Division', 
+    name: 'Metallurgical engineering division', 
     count: 1640,
-    scope: 'High strength TMT deformed steel bars, copper conductors, gold hallmarking'
+    scope: 'Primary steel, ferrous metallurgy, non-ferrous foundry products'
   }
 ];
 
@@ -388,69 +388,69 @@ export interface BisService {
 export const BIS_SERVICES: BisService[] = [
   {
     id: 'service-clubs',
-    title: 'Standards Clubs in Schools & Colleges',
-    category: 'Youth & Academia',
+    title: 'Standards clubs in schools and colleges',
+    category: 'Youth and academia',
     description: 'Promotes standardization culture and consumer rights awareness among students through learning-by-doing initiatives, laboratory visits, and science projects.',
-    eligibility: 'Educational Institutions (Schools & Colleges)',
-    features: ['BIS Financial grant up to ₹10,000/year', 'Mentorship by certified BIS Officers', 'Hands-on quality testing workshops'],
+    eligibility: 'Educational institutions (schools and colleges)',
+    features: ['BIS financial grant up to ₹10,000 per year', 'Mentorship by certified BIS officers', 'Hands-on quality testing workshops'],
     link: 'https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/standard-clubs/',
     iconName: 'GraduationCap',
-    badge: 'Academic Scheme'
+    badge: 'Academic scheme'
   },
   {
     id: 'service-nits',
-    title: 'NITS Training Programmes',
-    category: 'Capacity Building',
+    title: 'NITS training programmes',
+    category: 'Capacity building',
     description: 'National Institute of Training for Standardization provides specialized training for industry professionals, MSMEs, consumer organizations, and international participants.',
-    eligibility: 'MSMEs, Industry Professionals, Regulators, Students',
+    eligibility: 'MSMEs, industry professionals, regulators, students',
     features: ['ISO/IEC 17025 Lead Auditor training', 'Sector-specific technical standards courses', 'E-learning and on-campus certifications'],
     link: 'https://www.services.bis.gov.in/php/BIS_2.0/training/',
     iconName: 'Award',
-    badge: 'Professional Dev'
+    badge: 'Professional dev'
   },
   {
     id: 'service-isi',
-    title: 'Conformity Assessment & ISI Certification',
-    category: 'Industry & Manufacturing',
+    title: 'Conformity assessment and ISI certification',
+    category: 'Industry and manufacturing',
     description: 'Grant of BIS licence for use of the prestigious Standard Mark (ISI mark) under Scheme-I, ensuring compliance with Indian Standards for domestic and foreign manufacturers.',
-    eligibility: 'Domestic Manufacturers, Importers (FMCS Scheme)',
-    features: ['Over 1000+ products under mandatory certification', 'Surveillance audits & random market sampling', 'Digital e-BIS portal submission'],
+    eligibility: 'Domestic manufacturers, importers (FMCS scheme)',
+    features: ['Over 1000+ products under mandatory certification', 'Surveillance audits and random market sampling', 'Digital e-BIS portal submission'],
     link: 'https://www.services.bis.gov.in/php/BIS_2.0/dgasp/index.php',
     iconName: 'ShieldCheck',
     badge: 'Licensing'
   },
   {
     id: 'service-lrs',
-    title: 'Laboratory Recognition Scheme (LRS)',
-    category: 'Testing & Calibration',
+    title: 'Laboratory recognition scheme (LRS)',
+    category: 'Testing and calibration',
     description: 'Empanelment of independent commercial and government laboratories for testing third-party samples against Indian Standards in conformity with ISO/IEC 17025.',
-    eligibility: 'NABL-accredited Testing & Calibration Labs',
+    eligibility: 'NABL-accredited testing and calibration labs',
     features: ['Official empanelment for BIS surveillance sample testing', 'Automated sample assignment via e-BIS', 'Pan-India network of accredited labs'],
     link: 'https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/lab-recognition/',
     iconName: 'FlaskConical',
-    badge: 'Testing Labs'
+    badge: 'Testing labs'
   },
   {
     id: 'service-consumer',
-    title: 'Consumer Affairs & Grievance Redressal',
-    category: 'Citizen Services',
+    title: 'Consumer affairs and grievance redressal',
+    category: 'Citizen services',
     description: 'Dedicated consumer protection mechanism to report misuse of ISI mark, un-hallmarked gold jewelry, substandard products, and consumer complaints.',
-    eligibility: 'All Citizens & Consumers',
+    eligibility: 'All citizens and consumers',
     features: ['Toll-free National Helpline: 1800-11-4000', 'Direct surveillance raid initiation for spurious marks', 'Legal redressal under BIS Act 2016'],
     link: 'https://www.services.bis.gov.in/php/BIS_2.0/dgasp/consumer_grievance.php',
     iconName: 'AlertCircle',
-    badge: 'Consumer Protection'
+    badge: 'Consumer protection'
   },
   {
     id: 'service-biscare',
-    title: 'BIS CARE App & Verification Portal',
-    category: 'Digital Verification',
+    title: 'BIS CARE app and verification portal',
+    category: 'Digital verification',
     description: 'Empowers citizens to verify ISI mark licences, hallmarked jewellery (6-digit HUID code), CRS registration numbers, and lodge geotagged complaints in real time.',
-    eligibility: 'General Public (Android & iOS)',
+    eligibility: 'General public (Android and iOS)',
     features: ['Verify ISI licence number on products', 'HUID hallmarked gold authenticity check', 'CRS electronics registration lookup'],
     link: 'https://play.google.com/store/apps/details?id=com.bis.bis_care',
     iconName: 'Smartphone',
-    badge: 'Mobile App'
+    badge: 'Mobile app'
   }
 ];
 

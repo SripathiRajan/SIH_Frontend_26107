@@ -12,7 +12,7 @@ import {
   ChevronRight, 
   ShieldCheck 
 } from 'lucide-react-native';
-import { Colors } from '../../constants/theme';
+import { Colors, Shadows } from '../../constants/theme';
 import { TODAYS_BRIEF } from '../../services/mockData';
 
 export default function HomeScreen() {
@@ -193,12 +193,14 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 8,
-    backgroundColor: '#000000',
+    backgroundColor: Colors.primaryMuted,
+    borderWidth: 1,
+    borderColor: Colors.primaryBorder,
     alignItems: 'center',
     justifyContent: 'center',
   },
   monogramText: {
-    color: '#FFFFFF',
+    color: Colors.primary,
     fontWeight: '800',
     fontSize: 12,
   },
@@ -227,9 +229,12 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   darkCard: {
-    backgroundColor: '#1C1C1E',
+    backgroundColor: '#FFFFFF',
     borderRadius: 18,
     padding: 18,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    ...Shadows.sm,
   },
   locationTag: {
     flexDirection: 'row',
@@ -238,39 +243,41 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   locationTagText: {
-    color: '#F59E0B',
+    color: '#D97706',
     fontSize: 11,
     fontWeight: '600',
   },
   locationCity: {
     fontSize: 26,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   locationSub: {
     fontSize: 12,
-    color: '#9CA3AF',
+    color: '#64748B',
     marginTop: 2,
     marginBottom: 16,
   },
   statsStrip: {
-    backgroundColor: '#2C2C2E',
+    backgroundColor: '#F8FAFC',
     borderRadius: 12,
     padding: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: '#F1F5F9',
   },
   statColumn: {
     flex: 1,
   },
   statLabel: {
-    color: '#9CA3AF',
+    color: '#64748B',
     fontSize: 9,
     fontWeight: '700',
     letterSpacing: 0.5,
   },
   statValue: {
-    color: '#FFFFFF',
+    color: '#0F172A',
     fontSize: 13,
     fontWeight: '700',
     marginTop: 2,
@@ -325,23 +332,28 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   cardPrimary: {
-    backgroundColor: '#312E81',
+    backgroundColor: Colors.primaryMuted,
+    borderWidth: 1,
+    borderColor: Colors.primaryBorder,
+    ...Shadows.sm,
   },
   cardIconBoxPrimary: {
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: Colors.primaryBorder,
     alignItems: 'center',
     justifyContent: 'center',
   },
   cardTitlePrimary: {
-    color: '#FFFFFF',
+    color: Colors.primaryDark,
     fontSize: 15,
     fontWeight: '700',
   },
   cardSubPrimary: {
-    color: '#C7D2FE',
+    color: Colors.textSecondary,
     fontSize: 11,
     marginTop: 2,
   },

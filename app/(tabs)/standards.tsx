@@ -10,29 +10,33 @@ import {
   Modal,
   Linking
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { 
   Search, 
-  AlertTriangle, 
-  ChevronRight, 
   ArrowRight,
   ExternalLink,
-  X
+  X,
+  Settings
 } from 'lucide-react-native';
 import { BIS_STANDARDS, CATEGORIES } from '../../services/mockData';
+import { Tints } from '../../constants/theme';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function StandardsScreen() {
+  const router = useRouter();
+  const { t } = useLanguage();
   const [query, setQuery] = useState('');
   const [result, setResult] = useState<any>(null);
-  const [selectedJurisdiction, setSelectedJurisdiction] = useState('Southern Zone · Tamil Nadu & Puducherry (CNBO)');
+  const [selectedJurisdiction, setSelectedJurisdiction] = useState('Southern zone · Tamil Nadu and Puducherry (CNBO)');
   const [showJurisdictionModal, setShowJurisdictionModal] = useState(false);
   const [selectedDivision, setSelectedDivision] = useState<string | null>(null);
 
   const JURISDICTIONS = [
-    { id: 'j-south', name: 'Southern Zone · Tamil Nadu & Puducherry (CNBO Hub)' },
-    { id: 'j-north', name: 'Northern Zone · Delhi NCR, Punjab & Haryana (CL Sahibabad)' },
-    { id: 'j-west', name: 'Western Zone · Maharashtra & Goa (Mumbai BO)' },
-    { id: 'j-east', name: 'Eastern Zone · West Bengal & Odisha (Kolkata Hub)' },
-    { id: 'j-south2', name: 'Southern Zone II · Karnataka & Kerala (Bengaluru BO)' },
+    { id: 'j-south', name: 'Southern zone · Tamil Nadu and Puducherry (CNBO)' },
+    { id: 'j-north', name: 'Northern zone · Delhi NCR, Punjab and Haryana (CL Sahibabad)' },
+    { id: 'j-west', name: 'Western zone · Maharashtra and Goa (Mumbai BO)' },
+    { id: 'j-east', name: 'Eastern zone · West Bengal and Odisha (Kolkata Hub)' },
+    { id: 'j-south2', name: 'Southern zone II · Karnataka and Kerala (Bengaluru BO)' },
   ];
 
   const handleSearch = () => {
@@ -50,7 +54,7 @@ export default function StandardsScreen() {
         isNumber: matched.isNumber,
         status: matched.qcoStatus.toUpperCase() + ' (ISI Scheme-I)',
         scheme: matched.applicableScheme,
-        ministry: 'Ministry of Heavy Industries & DPIIT',
+        ministry: 'Ministry of Heavy Industries and DPIIT',
         gazette: matched.version,
         tests: matched.testParams.join(', '),
         sourceUrl: matched.sourceUrl,
@@ -64,7 +68,7 @@ export default function StandardsScreen() {
         scheme: 'Scheme-I / Scheme-IV',
         ministry: 'BIS Standards Promotion Council',
         gazette: 'Consult latest gazette amendment',
-        tests: 'General chemical purity & dimensional endurance',
+        tests: 'General chemical purity and dimensional endurance',
         sourceUrl: 'https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/knowyourstandards/indian_standards/',
         relatedStandards: []
       });
@@ -92,27 +96,37 @@ export default function StandardsScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.title}>Standards & QCO Verification</Text>
+      {/* Fixed Top Header Panel with Top Right Settings Button */}
+      <View style={styles.topHeader}>
+        <View style={{ flex: 1, gap: 3, paddingRight: 12 }}>
+          <Text style={styles.title}>{t('standards_title')}</Text>
           <Text style={styles.subtitle}>
-            Official Bureau of Indian Standards (BIS) Registry & Quality Control Orders
+            {t('standards_sub')}
           </Text>
         </View>
+        <TouchableOpacity 
+          style={styles.settingsBtn}
+          onPress={() => router.push('/settings')}
+          activeOpacity={0.7}
+          accessibilityLabel="Settings"
+        >
+          <Settings size={18} color="#475569" />
+        </TouchableOpacity>
+      </View>
 
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        
         {/* Search Card */}
         <View style={styles.searchCard}>
-          <Text style={styles.searchPrompt}>Verify Product Compliance & Mandatory Standards</Text>
+          <Text style={styles.searchPrompt}>{t('verify_compliance_prompt')}</Text>
           <View style={styles.inputRow}>
-            <Search size={18} color="#64748B" style={styles.searchIcon} />
+            <Search size={16} color="#6B7280" style={styles.searchIcon} />
             <TextInput
               style={styles.input}
               value={query}
               onChangeText={setQuery}
-              placeholder="e.g. Helmet, IS 4151, Stainless steel bottle, Plugs..."
-              placeholderTextColor="#94A3B8"
+              placeholder={t('standards_input_placeholder')}
+              placeholderTextColor="#9CA3AF"
               onSubmitEditing={handleSearch}
             />
           </View>
@@ -122,7 +136,7 @@ export default function StandardsScreen() {
             onPress={handleSearch}
             activeOpacity={0.85}
           >
-            <Text style={styles.searchBtnText}>Run QCO Knowledge Graph Check</Text>
+            <Text style={styles.searchBtnText}>{t('run_qco_check_btn')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -131,29 +145,32 @@ export default function StandardsScreen() {
           <View style={styles.resultCard}>
             <View style={styles.resultHeader}>
               <View style={{ flex: 1 }}>
-                <Text style={styles.resultTag}>RESOLVED CLASSIFICATION</Text>
+                <Text style={styles.resultTag}>{t('resolved_classification')}</Text>
                 <Text style={styles.resultProduct}>{result.product}</Text>
               </View>
               <View style={styles.mandatoryBadge}>
                 <Text style={styles.mandatoryText}>{result.status}</Text>
               </View>
+              <TouchableOpacity onPress={() => setResult(null)} style={{ padding: 4 }}>
+                <X size={16} color="#6B7280" />
+              </TouchableOpacity>
             </View>
 
             <View style={styles.detailGrid}>
-              <View style={styles.detailBox}>
-                <Text style={styles.detailLabel}>APPLICABLE STANDARD</Text>
-                <Text style={styles.detailValBold}>{result.isNumber}</Text>
+              <View style={[styles.detailBox, { backgroundColor: '#EFF6FF', borderColor: '#BFDBFE' }]}>
+                <Text style={[styles.detailLabel, { color: '#1565C0' }]}>{t('applicable_standard')}</Text>
+                <Text style={[styles.detailValBold, { color: '#1E3A8A' }]}>{result.isNumber}</Text>
               </View>
-              <View style={styles.detailBox}>
-                <Text style={styles.detailLabel}>CERTIFICATION SCHEME</Text>
-                <Text style={styles.detailVal}>{result.scheme}</Text>
+              <View style={[styles.detailBox, { backgroundColor: '#ECFDF5', borderColor: '#A7F3D0' }]}>
+                <Text style={[styles.detailLabel, { color: '#047857' }]}>{t('certification_scheme')}</Text>
+                <Text style={[styles.detailVal, { color: '#065F46', fontWeight: '700' }]}>{result.scheme}</Text>
               </View>
             </View>
 
             <View style={styles.extraBox}>
-              <Text style={styles.extraLabel}>Enforcing Authority & Gazette:</Text>
+              <Text style={styles.extraLabel}>{t('enforcing_authority')}</Text>
               <Text style={styles.extraVal}>{result.ministry} ({result.gazette})</Text>
-              <Text style={styles.extraLabel}>Mandatory Testing Scope:</Text>
+              <Text style={styles.extraLabel}>{t('mandatory_testing_scope')}</Text>
               <Text style={styles.extraVal}>{result.tests}</Text>
             </View>
 
@@ -164,7 +181,7 @@ export default function StandardsScreen() {
                 onPress={() => Linking.openURL(result.sourceUrl)}
                 activeOpacity={0.8}
               >
-                <Text style={styles.sourceUrlBtnText}>Open Official BIS Standard Registry Page</Text>
+                <Text style={styles.sourceUrlBtnText}>{t('open_bis_registry')}</Text>
                 <ExternalLink size={13} color="#0D9488" />
               </TouchableOpacity>
             )}
@@ -172,7 +189,7 @@ export default function StandardsScreen() {
             {/* Related Standards Cross-Reference */}
             {result.relatedStandards && result.relatedStandards.length > 0 && (
               <View style={styles.relatedBox}>
-                <Text style={styles.relatedHeading}>RELATED & CROSS-REFERENCED STANDARDS</Text>
+                <Text style={styles.relatedHeading}>{t('related_standards')}</Text>
                 <View style={styles.relatedChipsRow}>
                   {result.relatedStandards.map((std: string, idx: number) => (
                     <TouchableOpacity 
@@ -189,7 +206,7 @@ export default function StandardsScreen() {
                             isNumber: matchedStd.isNumber,
                             status: matchedStd.qcoStatus.toUpperCase() + ' (ISI Scheme-I)',
                             scheme: matchedStd.applicableScheme,
-                            ministry: 'Ministry of Heavy Industries & DPIIT',
+                            ministry: 'Ministry of Heavy Industries and DPIIT',
                             gazette: matchedStd.version,
                             tests: matchedStd.testParams.join(', '),
                             sourceUrl: matchedStd.sourceUrl,
@@ -209,11 +226,11 @@ export default function StandardsScreen() {
           </View>
         )}
 
-        {/* Meaningful Regulatory Jurisdiction Card */}
+        {/* Regulatory Jurisdiction Card */}
         <View style={styles.jurisdictionCard}>
           <View style={styles.jurisdictionTop}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.jurisdictionLabel}>REGULATORY JURISDICTION & ENFORCEMENT ZONE</Text>
+              <Text style={styles.jurisdictionLabel}>{t('jurisdiction_label')}</Text>
               <Text style={styles.jurisdictionValue}>{selectedJurisdiction}</Text>
             </View>
             <TouchableOpacity 
@@ -221,28 +238,24 @@ export default function StandardsScreen() {
               onPress={() => setShowJurisdictionModal(true)}
               activeOpacity={0.8}
             >
-              <Text style={styles.modifyBtnText}>Change Zone</Text>
+              <Text style={styles.modifyBtnText}>{t('change_zone_btn')}</Text>
             </TouchableOpacity>
           </View>
           
-          <View style={styles.jurisdictionDivider} />
-          
           <Text style={styles.jurisdictionExplanation}>
-            This setting configures your designated BIS Branch Office for annual surveillance audits, aligns state gazette enforcement cutoffs, and prioritizes third-party NABL testing laboratories within 250 km.
+            {t('jurisdiction_desc')}
           </Text>
         </View>
 
-        {/* Official BIS Standards Divisions (Real Data, Neatly Arranged) */}
+        {/* BIS Standards Division Councils */}
         <View style={styles.categorySection}>
           <View style={styles.catHeaderRow}>
-            <View>
-              <Text style={styles.categoryHeader}>BIS STANDARDS DIVISION COUNCILS</Text>
-              <Text style={styles.categorySub}>8 Central Technical Divisions · 14,000+ Indian Standards</Text>
-            </View>
+            <Text style={styles.categoryHeader}>{t('division_councils_title')}</Text>
+            <Text style={styles.categorySub}>{t('division_councils_sub')}</Text>
           </View>
 
           <View style={styles.divisionList}>
-            {CATEGORIES.map(cat => {
+            {CATEGORIES.slice(0, 6).map(cat => {
               const isSelected = selectedDivision === cat.id;
               return (
                 <TouchableOpacity 
@@ -251,17 +264,15 @@ export default function StandardsScreen() {
                   onPress={() => handleDivisionClick(cat)}
                   activeOpacity={0.8}
                 >
-                  <View style={styles.divisionTopRow}>
-                    <View style={styles.divisionCodeBadge}>
-                      <Text style={styles.divisionCodeText}>{cat.code}</Text>
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.divisionName}>{cat.name}</Text>
-                      <Text style={styles.divisionScope}>{cat.scope}</Text>
-                    </View>
-                    <View style={styles.divisionCountBadge}>
-                      <Text style={styles.divisionCountText}>{cat.count.toLocaleString()} Standards</Text>
-                    </View>
+                  <View style={styles.divisionCodeBadge}>
+                    <Text style={styles.divisionCodeText}>{cat.code}</Text>
+                  </View>
+                  <View style={styles.divisionInfo}>
+                    <Text style={styles.divisionName}>{cat.name}</Text>
+                    <Text style={styles.divisionScope}>{cat.scope}</Text>
+                  </View>
+                  <View style={styles.divisionCountBadge}>
+                    <Text style={styles.divisionCountText}>{cat.count.toLocaleString()} {t('standards_count_suffix')}</Text>
                   </View>
                 </TouchableOpacity>
               );
@@ -281,7 +292,7 @@ export default function StandardsScreen() {
         <SafeAreaView style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Select Regulatory Jurisdiction</Text>
+              <Text style={styles.modalTitle}>Select regulatory jurisdiction</Text>
               <TouchableOpacity onPress={() => setShowJurisdictionModal(false)}>
                 <X size={20} color="#0F172A" />
               </TouchableOpacity>
@@ -322,29 +333,52 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8FAFC',
   },
   scrollContent: {
-    padding: 18,
+    padding: 16,
     paddingBottom: 40,
     gap: 16,
   },
+  topHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
+  },
   header: {
-    gap: 4,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  settingsBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
     fontSize: 20,
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#0F172A',
   },
   subtitle: {
     fontSize: 12,
-    color: '#64748B',
+    color: '#6B7280',
     lineHeight: 18,
   },
   searchCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: 10,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#E5E7EB',
     gap: 12,
   },
   searchPrompt: {
@@ -355,40 +389,158 @@ const styles = StyleSheet.create({
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#FFFFFF',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#E5E7EB',
     paddingHorizontal: 12,
+    height: 44,
   },
   searchIcon: {
     marginRight: 8,
   },
   input: {
     flex: 1,
-    paddingVertical: 10,
     fontSize: 13,
     color: '#0F172A',
   },
   searchBtn: {
-    backgroundColor: '#0F172A',
+    backgroundColor: '#1565C0',
     borderRadius: 8,
     paddingVertical: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
   searchBtnText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '700',
     color: '#FFFFFF',
+  },
+
+  // Jurisdiction Card
+  jurisdictionCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    padding: 16,
+    gap: 8,
+  },
+  jurisdictionTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: 8,
+  },
+  jurisdictionLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#9CA3AF',
+    letterSpacing: 0.5,
+  },
+  jurisdictionValue: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#0F172A',
+    marginTop: 4,
+  },
+  modifyBtn: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  modifyBtnText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#374151',
+  },
+  jurisdictionExplanation: {
+    fontSize: 11,
+    color: '#4B5563',
+    lineHeight: 17,
+  },
+
+  // Standards Divisions Section
+  categorySection: {
+    gap: 12,
+  },
+  catHeaderRow: {
+    gap: 2,
+  },
+  categoryHeader: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#0F172A',
+  },
+  categorySub: {
+    fontSize: 12,
+    color: '#6B7280',
+  },
+  divisionList: {
+    gap: 8,
+  },
+  divisionCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    padding: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  divisionCardSelected: {
+    borderColor: '#1565C0',
+    backgroundColor: '#F8FAFC',
+  },
+  divisionCodeBadge: {
+    backgroundColor: '#EFF6FF',
+    borderRadius: 8,
+    width: 46,
+    height: 46,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  divisionCodeText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#1565C0',
+  },
+  divisionInfo: {
+    flex: 1,
+    marginLeft: 12,
+    marginRight: 8,
+  },
+  divisionName: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#0F172A',
+  },
+  divisionScope: {
+    fontSize: 11,
+    color: '#6B7280',
+    marginTop: 3,
+  },
+  divisionCountBadge: {
+    backgroundColor: '#EFF6FF',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  divisionCountText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#1565C0',
   },
 
   // Result Card
   resultCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#E5E7EB',
     padding: 16,
     gap: 12,
   },
@@ -401,10 +553,10 @@ const styles = StyleSheet.create({
   resultTag: {
     fontSize: 9,
     fontWeight: '800',
-    color: '#64748B',
+    color: '#6B7280',
   },
   resultProduct: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '800',
     color: '#0F172A',
     marginTop: 2,
@@ -428,26 +580,21 @@ const styles = StyleSheet.create({
   },
   detailBox: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
     padding: 10,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#F1F5F9',
   },
   detailLabel: {
     fontSize: 9,
     fontWeight: '700',
-    color: '#64748B',
   },
   detailValBold: {
     fontSize: 13,
     fontWeight: '800',
-    color: '#0F172A',
     marginTop: 2,
   },
   detailVal: {
     fontSize: 11,
-    color: '#334155',
     marginTop: 2,
   },
   extraBox: {
@@ -459,7 +606,7 @@ const styles = StyleSheet.create({
   extraLabel: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#64748B',
+    color: '#6B7280',
   },
   extraVal: {
     fontSize: 11,
@@ -487,14 +634,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8FAFC',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#E5E7EB',
     padding: 10,
     gap: 6,
   },
   relatedHeading: {
     fontSize: 9,
     fontWeight: '800',
-    color: '#64748B',
+    color: '#6B7280',
     letterSpacing: 0.5,
   },
   relatedChipsRow: {
@@ -506,7 +653,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#E5E7EB',
     borderRadius: 6,
     paddingVertical: 6,
     paddingHorizontal: 10,
@@ -518,131 +665,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  // Jurisdiction Card
-  jurisdictionCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    padding: 16,
-    gap: 10,
-  },
-  jurisdictionTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    gap: 8,
-  },
-  jurisdictionLabel: {
-    fontSize: 9,
-    fontWeight: '800',
-    color: '#64748B',
-    letterSpacing: 0.5,
-  },
-  jurisdictionValue: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: '#0F172A',
-    marginTop: 2,
-  },
-  modifyBtn: {
-    backgroundColor: '#F1F5F9',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
-  modifyBtnText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#0F172A',
-  },
-  jurisdictionDivider: {
-    height: 1,
-    backgroundColor: '#F1F5F9',
-  },
-  jurisdictionExplanation: {
-    fontSize: 11,
-    color: '#475569',
-    lineHeight: 16,
-  },
-
-  // Standards Divisions Section
-  categorySection: {
-    gap: 12,
-  },
-  catHeaderRow: {
-    gap: 2,
-  },
-  categoryHeader: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: '#0F172A',
-  },
-  categorySub: {
-    fontSize: 11,
-    color: '#64748B',
-  },
-  divisionList: {
-    gap: 8,
-  },
-  divisionCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    padding: 14,
-  },
-  divisionCardSelected: {
-    borderColor: '#0F172A',
-    backgroundColor: '#F8FAFC',
-  },
-  divisionTopRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  divisionCodeBadge: {
-    backgroundColor: '#0F172A',
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-    borderRadius: 6,
-    minWidth: 46,
-    alignItems: 'center',
-  },
-  divisionCodeText: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#FFFFFF',
-    fontFamily: 'monospace',
-  },
-  divisionName: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#0F172A',
-  },
-  divisionScope: {
-    fontSize: 11,
-    color: '#64748B',
-    marginTop: 2,
-  },
-  divisionCountBadge: {
-    backgroundColor: '#F1F5F9',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-  },
-  divisionCountText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#475569',
-  },
-
   // Modal
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.6)',
+    backgroundColor: 'rgba(15, 23, 42, 0.4)',
     justifyContent: 'center',
     padding: 20,
   },
@@ -670,11 +696,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#F8FAFC',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#E5E7EB',
   },
   jurisdictionOptionActive: {
-    backgroundColor: '#0F172A',
-    borderColor: '#0F172A',
+    backgroundColor: '#EFF6FF',
+    borderColor: '#1565C0',
   },
   jurisdictionOptionText: {
     fontSize: 12,
@@ -682,7 +708,7 @@ const styles = StyleSheet.create({
     color: '#0F172A',
   },
   jurisdictionOptionTextActive: {
-    color: '#FFFFFF',
+    color: '#1565C0',
     fontWeight: '700',
   },
 });

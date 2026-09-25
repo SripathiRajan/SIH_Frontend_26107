@@ -2,36 +2,47 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { 
-  ArrowLeft
+  ArrowLeft,
+  Settings
 } from 'lucide-react-native';
 import { VAULT_DOCS } from '../../services/mockData';
+import { Colors, Shadows } from '../../constants/theme';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function VaultScreen() {
   const router = useRouter();
+  const { t } = useLanguage();
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn} activeOpacity={0.7}>
           <ArrowLeft size={20} color="#111827" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Document Vault</Text>
-        <View style={{ width: 20 }} />
+        <Text style={styles.headerTitle}>{t('vault_title')}</Text>
+        <TouchableOpacity 
+          onPress={() => router.push('/settings')} 
+          style={styles.settingsBtn}
+          activeOpacity={0.7}
+          accessibilityLabel="Settings"
+        >
+          <Settings size={18} color="#0F172A" />
+        </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         
         {/* Upload Card */}
         <TouchableOpacity style={styles.uploadCard} activeOpacity={0.8}>
-          <Text style={styles.uploadTitle}>Upload Certificate or Test Report</Text>
-          <Text style={styles.uploadSub}>PDF, JPG or PNG up to 15MB · Instant OCR extraction</Text>
+          <Text style={styles.uploadTitle}>{t('upload_doc_title')}</Text>
+          <Text style={styles.uploadSub}>{t('upload_doc_sub')}</Text>
           <View style={styles.ocrBadge}>
             <Text style={styles.ocrBadgeText}>Legal Hash Verification Active</Text>
           </View>
         </TouchableOpacity>
 
         <View style={styles.listHeader}>
-          <Text style={styles.listTitle}>Stored Certificates ({VAULT_DOCS.length})</Text>
+          <Text style={styles.listTitle}>{t('stored_certs')} ({VAULT_DOCS.length})</Text>
         </View>
 
         <View style={styles.docsList}>
@@ -79,12 +90,12 @@ export default function VaultScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FAFAFA',
+    backgroundColor: '#F8FAFC',
   },
   header: {
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    borderBottomColor: '#E2E8F0',
     paddingHorizontal: 16,
     paddingVertical: 12,
     flexDirection: 'row',
@@ -97,7 +108,17 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#111827',
+    color: '#0F172A',
+  },
+  settingsBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    backgroundColor: '#F8FAFC',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   scrollContent: {
     padding: 16,
@@ -105,14 +126,15 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   uploadCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F0FDFA',
     borderWidth: 2,
-    borderColor: '#CCFBF1',
+    borderColor: '#99F6E4',
     borderStyle: 'dashed',
-    borderRadius: 18,
+    borderRadius: 14,
     padding: 24,
     alignItems: 'center',
     gap: 6,
+    ...Shadows.sm,
   },
   uploadIconBox: {
     width: 48,
@@ -126,15 +148,17 @@ const styles = StyleSheet.create({
   uploadTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#111827',
+    color: '#0F172A',
   },
   uploadSub: {
     fontSize: 11,
-    color: '#6B7280',
+    color: '#64748B',
     textAlign: 'center',
   },
   ocrBadge: {
-    backgroundColor: '#EEF2FF',
+    backgroundColor: Colors.primaryMuted,
+    borderWidth: 1,
+    borderColor: Colors.primaryBorder,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
@@ -143,7 +167,7 @@ const styles = StyleSheet.create({
   ocrBadgeText: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#312E81',
+    color: Colors.primary,
   },
   listHeader: {
     marginTop: 4,
@@ -151,7 +175,7 @@ const styles = StyleSheet.create({
   listTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#111827',
+    color: '#0F172A',
   },
   docsList: {
     gap: 12,
@@ -159,10 +183,11 @@ const styles = StyleSheet.create({
   docCard: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 16,
+    borderColor: '#E2E8F0',
+    borderRadius: 14,
     padding: 16,
     gap: 8,
+    ...Shadows.sm,
   },
   docTop: {
     flexDirection: 'row',
@@ -170,13 +195,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   catPill: {
-    backgroundColor: '#EEF2FF',
+    backgroundColor: Colors.primaryMuted,
+    borderWidth: 1,
+    borderColor: Colors.primaryBorder,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 8,
   },
   catPillText: {
-    color: '#312E81',
+    color: Colors.primary,
     fontSize: 10,
     fontWeight: '700',
   },
@@ -188,6 +215,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
+    borderWidth: 1,
+    borderColor: '#CCFBF1',
   },
   verifiedText: {
     color: '#0D9488',
@@ -197,30 +226,32 @@ const styles = StyleSheet.create({
   docName: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#111827',
+    color: '#0F172A',
   },
   docStandard: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#312E81',
+    color: Colors.primary,
   },
   docMeta: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: '#F8FAFC',
     borderRadius: 10,
     padding: 10,
     gap: 3,
+    borderWidth: 1,
+    borderColor: '#F1F5F9',
   },
   metaRow: {
     fontSize: 11,
-    color: '#4B5563',
+    color: '#475569',
   },
   metaBold: {
     fontWeight: '700',
-    color: '#111827',
+    color: '#0F172A',
   },
   hashText: {
     fontSize: 10,
-    color: '#9CA3AF',
+    color: '#94A3B8',
     marginTop: 2,
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
@@ -233,31 +264,34 @@ const styles = StyleSheet.create({
   },
   receiptBtn: {
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: '#E2E8F0',
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 6,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
+    backgroundColor: '#F8FAFC',
   },
   receiptText: {
     fontSize: 11,
-    fontWeight: '600',
-    color: '#4B5563',
+    fontWeight: '700',
+    color: '#334155',
   },
   askBtn: {
-    backgroundColor: '#EEF2FF',
+    backgroundColor: Colors.primaryMuted,
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 6,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
+    borderWidth: 1,
+    borderColor: Colors.primaryBorder,
   },
   askBtnText: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#312E81',
+    color: Colors.primary,
   },
 });

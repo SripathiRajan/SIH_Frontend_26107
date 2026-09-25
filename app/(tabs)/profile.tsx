@@ -17,6 +17,8 @@ import {
   FileText,
   ArrowUpRight,
 } from 'lucide-react-native';
+import { Colors, Shadows, Tints } from '../../constants/theme';
+import { useLanguage } from '../../context/LanguageContext';
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 const COMPANY_INFO = {
@@ -78,6 +80,7 @@ const BIS_OFFICER = {
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 export default function ProfileScreen() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'licenses' | 'audit' | 'officer'>('licenses');
   const [expandedLic, setExpandedLic] = useState<string | null>('lic-1');
 
@@ -93,9 +96,9 @@ export default function ProfileScreen() {
     <SafeAreaView style={styles.safeArea}>
       {/* Top Header */}
       <View style={styles.topHeader}>
-        <View>
-          <Text style={styles.screenTitle}>Enterprise Credentials</Text>
-          <Text style={styles.screenSubtitle}>BIS Licensee Registry & Compliance Records</Text>
+        <View style={{ flex: 1, paddingRight: 12 }}>
+          <Text style={styles.screenTitle}>{t('profile_title')}</Text>
+          <Text style={styles.screenSubtitle}>{t('profile_sub')}</Text>
         </View>
         <TouchableOpacity
           style={styles.settingsBtn}
@@ -103,7 +106,7 @@ export default function ProfileScreen() {
           activeOpacity={0.7}
           accessibilityLabel="Settings"
         >
-          <Settings size={18} color="#475569" />
+          <Settings size={18} color="#0F172A" />
         </TouchableOpacity>
       </View>
 
@@ -125,30 +128,28 @@ export default function ProfileScreen() {
 
           <View style={styles.infoGrid}>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Authorized Signatory</Text>
+              <Text style={styles.infoLabel}>{t('auth_signatory')}</Text>
               <Text style={styles.infoValue}>{COMPANY_INFO.signatory}</Text>
             </View>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Factory Premises</Text>
+              <Text style={styles.infoLabel}>{t('factory_premises')}</Text>
               <Text style={styles.infoValue}>{COMPANY_INFO.address}</Text>
             </View>
           </View>
 
-          {/* Clean Metric Row */}
+          {/* Clean Metric Row with Light Tints */}
           <View style={styles.metricsRow}>
-            <View style={styles.metricItem}>
-              <Text style={styles.metricNum}>{COMPANY_INFO.complianceScore}/100</Text>
-              <Text style={styles.metricText}>Audit Score</Text>
+            <View style={[styles.metricCard, { backgroundColor: Tints.emerald.bg, borderColor: Tints.emerald.border }]}>
+              <Text style={[styles.metricNum, { color: Tints.emerald.textDark }]}>{COMPANY_INFO.complianceScore}/100</Text>
+              <Text style={[styles.metricText, { color: Tints.emerald.text }]}>{t('audit_score')}</Text>
             </View>
-            <View style={styles.metricSeparator} />
-            <View style={styles.metricItem}>
-              <Text style={styles.metricNum}>2</Text>
-              <Text style={styles.metricText}>Active Licenses</Text>
+            <View style={[styles.metricCard, { backgroundColor: Tints.blue.bg, borderColor: Tints.blue.border }]}>
+              <Text style={[styles.metricNum, { color: Tints.blue.textDark }]}>2</Text>
+              <Text style={[styles.metricText, { color: Tints.blue.text }]}>{t('active_licenses')}</Text>
             </View>
-            <View style={styles.metricSeparator} />
-            <View style={styles.metricItem}>
-              <Text style={styles.metricNum}>18-Nov-2024</Text>
-              <Text style={styles.metricText}>Next Surveillance</Text>
+            <View style={[styles.metricCard, { backgroundColor: Tints.amber.bg, borderColor: Tints.amber.border }]}>
+              <Text style={[styles.metricNum, { color: Tints.amber.textDark }]}>18-Nov-2024</Text>
+              <Text style={[styles.metricText, { color: Tints.amber.textDark }]}>{t('next_surveillance')}</Text>
             </View>
           </View>
         </View>
@@ -161,7 +162,7 @@ export default function ProfileScreen() {
             activeOpacity={0.8}
           >
             <Text style={[styles.segmentText, activeTab === 'licenses' && styles.segmentTextActive]}>
-              Licenses ({LICENSES.length})
+              {t('tab_licenses')} ({LICENSES.length})
             </Text>
           </TouchableOpacity>
 
@@ -171,7 +172,7 @@ export default function ProfileScreen() {
             activeOpacity={0.8}
           >
             <Text style={[styles.segmentText, activeTab === 'audit' && styles.segmentTextActive]}>
-              Audit & Visits
+              {t('tab_audit')}
             </Text>
           </TouchableOpacity>
 
@@ -181,7 +182,7 @@ export default function ProfileScreen() {
             activeOpacity={0.8}
           >
             <Text style={[styles.segmentText, activeTab === 'officer' && styles.segmentTextActive]}>
-              BIS Officer
+              {t('tab_officer')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -218,15 +219,15 @@ export default function ProfileScreen() {
                     <View style={styles.licenseExpanded}>
                       <View style={styles.divider} />
                       <View style={styles.detailLine}>
-                        <Text style={styles.detailKey}>Factory Unit</Text>
+                        <Text style={styles.detailKey}>{t('factory_unit')}</Text>
                         <Text style={styles.detailVal}>{lic.factory}</Text>
                       </View>
                       <View style={styles.detailLine}>
-                        <Text style={styles.detailKey}>Lab Clearance</Text>
+                        <Text style={styles.detailKey}>{t('lab_clearance')}</Text>
                         <Text style={styles.detailVal}>{lic.labClearance}</Text>
                       </View>
                       <View style={styles.detailLine}>
-                        <Text style={styles.detailKey}>Surveillance Visit</Text>
+                        <Text style={styles.detailKey}>{t('surveillance_visit')}</Text>
                         <Text style={[styles.detailVal, { color: '#0F172A', fontWeight: '700' }]}>
                           {lic.nextAudit}
                         </Text>
@@ -239,7 +240,7 @@ export default function ProfileScreen() {
                           activeOpacity={0.8}
                         >
                           <FileText size={14} color="#FFFFFF" />
-                          <Text style={styles.primaryBtnText}>View License Certificate</Text>
+                          <Text style={styles.primaryBtnText}>{t('view_license_cert')}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -247,8 +248,8 @@ export default function ProfileScreen() {
                           onPress={() => router.push('/(tabs)/standards')}
                           activeOpacity={0.8}
                         >
-                          <Text style={styles.secondaryBtnText}>Standard Specifications</Text>
-                          <ArrowUpRight size={14} color="#0F172A" />
+                          <Text style={styles.secondaryBtnText}>{t('standard_specs')}</Text>
+                          <ArrowUpRight size={14} color={Tints.blue.text} />
                         </TouchableOpacity>
                       </View>
                     </View>
@@ -264,24 +265,23 @@ export default function ProfileScreen() {
           <View style={styles.tabContent}>
             {/* Notice */}
             <View style={styles.auditNotice}>
-              <Text style={styles.auditNoticeTitle}>Next Audit: 18-Nov-2024</Text>
+              <Text style={styles.auditNoticeTitle}>{t('next_audit_title')}</Text>
               <Text style={styles.auditNoticeDesc}>
-                Surveillance inspection for IS 4151 (Two-Wheeler Helmets) scheduled by CNBO.
-                Maintain test logs and factory calibration registers in the Document Vault.
+                {t('surveillance_desc')}
               </Text>
               <TouchableOpacity
                 style={styles.auditNoticeBtn}
                 onPress={() => router.push('/vault')}
                 activeOpacity={0.8}
               >
-                <Text style={styles.auditNoticeBtnText}>Prepare Audit Documents</Text>
+                <Text style={styles.auditNoticeBtnText}>{t('prepare_audit_docs')}</Text>
                 <ChevronRight size={14} color="#0F172A" />
               </TouchableOpacity>
             </View>
 
             {/* Stepper list */}
             <View style={styles.lifecycleCard}>
-              <Text style={styles.lifecycleTitle}>Compliance Lifecycle</Text>
+              <Text style={styles.lifecycleTitle}>{t('compliance_lifecycle')}</Text>
               {AUDIT_STEPS.map((step, idx) => (
                 <View key={idx} style={styles.lifecycleRow}>
                   <View style={styles.stepNumBox}>
@@ -308,11 +308,11 @@ export default function ProfileScreen() {
               <View style={styles.divider} />
 
               <View style={styles.detailLine}>
-                <Text style={styles.detailKey}>Branch Office</Text>
+                <Text style={styles.detailKey}>{t('branch_office')}</Text>
                 <Text style={styles.detailVal}>{BIS_OFFICER.office}</Text>
               </View>
               <View style={styles.detailLine}>
-                <Text style={styles.detailKey}>Office Hours</Text>
+                <Text style={styles.detailKey}>{t('office_hours')}</Text>
                 <Text style={styles.detailVal}>{BIS_OFFICER.hours}</Text>
               </View>
 
@@ -332,7 +332,7 @@ export default function ProfileScreen() {
                   activeOpacity={0.8}
                 >
                   <Mail size={14} color="#0F172A" />
-                  <Text style={styles.officerBtnText}>Email Branch</Text>
+                  <Text style={styles.officerBtnText}>{t('email_branch')}</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -380,8 +380,8 @@ const styles = StyleSheet.create({
   settingsBtn: {
     width: 36,
     height: 36,
-    borderRadius: 8,
-    backgroundColor: '#F1F5F9',
+    borderRadius: 18,
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
@@ -396,11 +396,12 @@ const styles = StyleSheet.create({
   // Enterprise Card
   enterpriseCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: 14,
     padding: 18,
     borderWidth: 1,
     borderColor: '#E2E8F0',
     gap: 12,
+    ...Shadows.sm,
   },
   titleSection: {
     gap: 4,
@@ -444,35 +445,25 @@ const styles = StyleSheet.create({
   },
   metricsRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#F8FAFC',
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderWidth: 1,
-    borderColor: '#F1F5F9',
+    gap: 8,
     marginTop: 4,
   },
-  metricItem: {
+  metricCard: {
     flex: 1,
     alignItems: 'center',
-    gap: 3,
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+    gap: 2,
   },
   metricNum: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '800',
-    color: '#0F172A',
   },
   metricText: {
-    fontSize: 11,
-    color: '#64748B',
-    fontWeight: '500',
-  },
-  metricSeparator: {
-    width: 1,
-    height: 24,
-    backgroundColor: '#E2E8F0',
+    fontSize: 10,
+    fontWeight: '600',
   },
 
   // Segmented Control
@@ -492,6 +483,7 @@ const styles = StyleSheet.create({
   },
   segmentBtnActive: {
     backgroundColor: '#FFFFFF',
+    ...Shadows.sm,
   },
   segmentText: {
     fontSize: 12,
@@ -500,7 +492,7 @@ const styles = StyleSheet.create({
   },
   segmentTextActive: {
     fontWeight: '800',
-    color: '#0F172A',
+    color: Colors.primary,
   },
 
   // Tab Content
@@ -511,11 +503,12 @@ const styles = StyleSheet.create({
   // License Card
   licenseCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: 14,
     padding: 16,
     borderWidth: 1,
     borderColor: '#E2E8F0',
     gap: 10,
+    ...Shadows.sm,
   },
   licenseHeader: {
     flexDirection: 'row',
@@ -589,9 +582,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    backgroundColor: '#0F172A',
+    backgroundColor: Colors.primary,
     borderRadius: 8,
     paddingVertical: 9,
+    ...Shadows.sm,
   },
   primaryBtnText: {
     fontSize: 12,
@@ -604,23 +598,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 4,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: Tints.blue.bg,
     borderRadius: 8,
     paddingVertical: 9,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: Tints.blue.border,
   },
   secondaryBtnText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#0F172A',
+    color: Tints.blue.text,
   },
 
   // Audit Tab
   auditNotice: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Tints.amber.bg,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: Tints.amber.border,
     borderRadius: 12,
     padding: 16,
     gap: 8,
@@ -628,11 +622,11 @@ const styles = StyleSheet.create({
   auditNoticeTitle: {
     fontSize: 14,
     fontWeight: '800',
-    color: '#0F172A',
+    color: Tints.amber.textDark,
   },
   auditNoticeDesc: {
     fontSize: 12,
-    color: '#475569',
+    color: Tints.amber.textDark,
     lineHeight: 18,
   },
   auditNoticeBtn: {
@@ -644,7 +638,7 @@ const styles = StyleSheet.create({
   auditNoticeBtnText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#0F172A',
+    color: Tints.amber.textDark,
   },
   lifecycleCard: {
     backgroundColor: '#FFFFFF',
@@ -670,16 +664,16 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: Tints.emerald.bg,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: Tints.emerald.border,
   },
   stepNumText: {
     fontSize: 11,
-    fontWeight: '700',
-    color: '#475569',
+    fontWeight: '800',
+    color: Tints.emerald.textDark,
   },
   stepDetail: {
     flex: 1,

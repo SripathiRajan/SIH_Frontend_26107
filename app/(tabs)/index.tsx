@@ -18,12 +18,23 @@ import {
   Settings,
   X,
   ExternalLink,
-  Phone
+  Phone,
+  FileCheck2,
+  FolderLock,
+  Building2,
+  Award,
+  Sparkles,
+  ShieldCheck,
+  CheckCircle2,
+  CheckCheck
 } from 'lucide-react-native';
 import { TODAYS_BRIEF } from '../../services/mockData';
+import { Colors, Shadows, Tints } from '../../constants/theme';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [showNotifications, setShowNotifications] = useState(false);
 
   return (
@@ -36,8 +47,8 @@ export default function HomeScreen() {
             <Text style={styles.avatarText}>SR</Text>
           </View>
           <View>
-            <Text style={styles.greetingTitle}>Good evening, Sripathi</Text>
-            <Text style={styles.greetingSub}>BIS Licensee Dashboard</Text>
+            <Text style={styles.greetingTitle}>{t('greeting_title')}</Text>
+            <Text style={styles.greetingSub}>{t('greeting_sub')}</Text>
           </View>
         </View>
 
@@ -71,42 +82,46 @@ export default function HomeScreen() {
         <View style={styles.enterpriseCard}>
           <View style={styles.cardHeaderRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.cardSuperTitle}>ENTERPRISE COMPLIANCE STATUS</Text>
-              <Text style={styles.companyName}>Apex Safety Gear & Flasks Pvt. Ltd.</Text>
-              <Text style={styles.udyamText}>UDYAM-TN-02-0049281 · MSME Manufacturing</Text>
+              <Text style={styles.cardSuperTitle}>{t('enterprise_status')}</Text>
+              <Text style={styles.companyName}>Apex Safety Gear and Flasks Pvt. Ltd.</Text>
+              <Text style={styles.udyamText}>UDYAM-TN-02-0049281 · MSME manufacturing</Text>
             </View>
             <View style={styles.statusPill}>
-              <Text style={styles.statusPillText}>QCO Compliant</Text>
+              <Text style={styles.statusPillText}>{t('qco_compliant')}</Text>
             </View>
           </View>
 
           <View style={styles.cardDivider} />
 
           <View style={styles.facilityRow}>
-            <Text style={styles.facilityLabel}>Registered Facility:</Text>
+            <Text style={styles.facilityLabel}>{t('registered_facility')}</Text>
             <Text style={styles.facilityVal}>Plot 42, SIDCO Guindy Industrial Estate, Chennai</Text>
           </View>
 
           {/* Certified Product Lines */}
           <View style={styles.productLinesBox}>
-            <Text style={styles.productLinesTitle}>Certified Product Lines (2 Active ISI Licenses):</Text>
+            <Text style={styles.productLinesTitle}>{t('certified_product_lines')}</Text>
             
             <View style={styles.productItem}>
-              <View style={styles.bulletPoint} />
+              <CheckCheck size={16} color="#38BDF8" style={{ marginTop: 2 }} />
               <View style={{ flex: 1 }}>
-                <Text style={styles.productItemName}>Two-Wheeler Helmets</Text>
-                <Text style={styles.productItemMeta}>Standard: IS 4151:2015 · License: CM/L-8472910</Text>
+                <Text style={styles.productItemName}>{t('two_wheeler_helmets')}</Text>
+                <Text style={styles.productItemMeta}>IS 4151:2015 · CM/L-8472910</Text>
               </View>
-              <Text style={styles.productExpiry}>Valid 2027</Text>
+              <View style={styles.validTagGreen}>
+                <Text style={styles.validTagGreenText}>{t('valid_2027')}</Text>
+              </View>
             </View>
 
             <View style={styles.productItem}>
-              <View style={styles.bulletPoint} />
+              <CheckCheck size={16} color="#38BDF8" style={{ marginTop: 2 }} />
               <View style={{ flex: 1 }}>
-                <Text style={styles.productItemName}>Stainless Steel Flasks & Water Bottles</Text>
-                <Text style={styles.productItemMeta}>Standard: IS 17803:2022 · License: CM/L-9104823</Text>
+                <Text style={styles.productItemName}>{t('stainless_steel_flasks')}</Text>
+                <Text style={styles.productItemMeta}>IS 17803:2022 · CM/L-9104823</Text>
               </View>
-              <Text style={styles.productExpiry}>Valid 2026</Text>
+              <View style={styles.validTagAmber}>
+                <Text style={styles.validTagAmberText}>{t('valid_2026')}</Text>
+              </View>
             </View>
           </View>
 
@@ -115,8 +130,8 @@ export default function HomeScreen() {
             onPress={() => router.push('/(tabs)/profile')}
             activeOpacity={0.8}
           >
-            <Text style={styles.cardActionBtnText}>Manage Enterprise Credentials & Officer Details</Text>
-            <ChevronRight size={14} color="#0F172A" />
+            <Text style={styles.cardActionBtnText}>{t('manage_enterprise')}</Text>
+            <ChevronRight size={14} color="#6B7280" />
           </TouchableOpacity>
         </View>
 
@@ -126,23 +141,59 @@ export default function HomeScreen() {
           onPress={() => router.push('/(tabs)/ask')}
           activeOpacity={0.9}
         >
-          <Text style={styles.heroHeading}>Ask Praman Compliance Assistant</Text>
+          <View style={styles.heroTopRow}>
+            <View style={styles.heroBadge}>
+              <Sparkles size={11} color="#1D4ED8" />
+              <Text style={styles.heroBadgeText}>{t('ask_praman_badge')}</Text>
+            </View>
+            <View style={styles.livePulseTag}>
+              <View style={styles.pulseDot} />
+              <Text style={styles.livePulseText}>{t('live_gazette_sync')}</Text>
+            </View>
+          </View>
+
+          <Text style={styles.heroHeading}>{t('ask_praman_title')}</Text>
           <Text style={styles.heroSubheading}>
-            Ask questions in English, Hindi, Tamil, Marathi, Bengali, Odia, Kannada, or Tanglish. Instant parallel retrieval from official BIS gazettes.
+            {t('ask_praman_sub')}
           </Text>
 
           <View style={styles.fakeSearchTrigger}>
-            <Search size={15} color="#94A3B8" />
+            <Search size={14} color="#6B7280" />
             <Text style={styles.fakeSearchPlaceholder}>
-              Ask about IS 4151, QCO status, or lab near you...
+              {t('search_praman_placeholder')}
             </Text>
-            <ArrowRight size={15} color="#0D9488" />
+            <ArrowRight size={15} color="#1D4ED8" />
+          </View>
+
+          {/* Quick Prompt Pills */}
+          <View style={styles.heroChipsRow}>
+            <TouchableOpacity 
+              style={styles.heroChip}
+              onPress={() => router.push('/(tabs)/ask')}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.heroChipText}>{t('chip_helmets')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.heroChip}
+              onPress={() => router.push('/(tabs)/ask')}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.heroChipText}>{t('chip_gold')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.heroChip}
+              onPress={() => router.push('/(tabs)/ask')}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.heroChipText}>{t('chip_labs')}</Text>
+            </TouchableOpacity>
           </View>
         </TouchableOpacity>
 
         {/* 4. Quick Services Grid */}
         <View style={styles.actionsSection}>
-          <Text style={styles.sectionHeader}>Quick Services</Text>
+          <Text style={styles.sectionHeader}>{t('quick_regulatory_services')}</Text>
 
           <View style={styles.gridContainer}>
             {/* Card 1: QCO Checker */}
@@ -151,9 +202,19 @@ export default function HomeScreen() {
               onPress={() => router.push('/(tabs)/standards')}
               activeOpacity={0.8}
             >
-              <Text style={styles.cardMainTitle}>QCO & Standards Checker</Text>
-              <Text style={styles.cardSubtitle}>Search 14,000+ Indian standards & mandatory gazettes</Text>
-              <ChevronRight size={16} color="#CBD5E1" style={styles.chevronPos} />
+              <View style={[styles.actionIconBox, { backgroundColor: Tints.amber.bg, borderColor: Tints.amber.border }]}>
+                <FileCheck2 size={20} color={Tints.amber.text} />
+              </View>
+              <View style={{ flex: 1, gap: 2 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Text style={styles.cardMainTitle}>{t('qco_checker_title')}</Text>
+                  <View style={[styles.miniCategoryBadge, { backgroundColor: Tints.amber.bg }]}>
+                    <Text style={[styles.miniCategoryText, { color: Tints.amber.textDark }]}>{t('qco_checker_badge')}</Text>
+                  </View>
+                </View>
+                <Text style={styles.cardSubtitle}>{t('qco_checker_sub')}</Text>
+              </View>
+              <ChevronRight size={16} color="#94A3B8" />
             </TouchableOpacity>
 
             {/* Card 2: Document Vault */}
@@ -162,9 +223,19 @@ export default function HomeScreen() {
               onPress={() => router.push('/vault')}
               activeOpacity={0.8}
             >
-              <Text style={styles.cardMainTitle}>Document Vault</Text>
-              <Text style={styles.cardSubtitle}>3 verified certificates & NABL test reports</Text>
-              <ChevronRight size={16} color="#CBD5E1" style={styles.chevronPos} />
+              <View style={[styles.actionIconBox, { backgroundColor: Tints.indigo.bg, borderColor: Tints.indigo.border }]}>
+                <FolderLock size={20} color={Tints.indigo.text} />
+              </View>
+              <View style={{ flex: 1, gap: 2 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Text style={styles.cardMainTitle}>{t('doc_vault_title')}</Text>
+                  <View style={[styles.miniCategoryBadge, { backgroundColor: Tints.indigo.bg }]}>
+                    <Text style={[styles.miniCategoryText, { color: Tints.indigo.textDark }]}>{t('doc_vault_badge')}</Text>
+                  </View>
+                </View>
+                <Text style={styles.cardSubtitle}>{t('doc_vault_sub')}</Text>
+              </View>
+              <ChevronRight size={16} color="#94A3B8" />
             </TouchableOpacity>
 
             {/* Card 3: NABL Labs */}
@@ -173,9 +244,19 @@ export default function HomeScreen() {
               onPress={() => router.push('/(tabs)/map')}
               activeOpacity={0.8}
             >
-              <Text style={styles.cardMainTitle}>All-India Testing Labs Directory</Text>
-              <Text style={styles.cardSubtitle}>Find accredited test facilities by product and city</Text>
-              <ChevronRight size={16} color="#CBD5E1" style={styles.chevronPos} />
+              <View style={[styles.actionIconBox, { backgroundColor: Tints.teal.bg, borderColor: Tints.teal.border }]}>
+                <Building2 size={20} color={Tints.teal.text} />
+              </View>
+              <View style={{ flex: 1, gap: 2 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Text style={styles.cardMainTitle}>{t('labs_dir_title')}</Text>
+                  <View style={[styles.miniCategoryBadge, { backgroundColor: Tints.teal.bg }]}>
+                    <Text style={[styles.miniCategoryText, { color: Tints.teal.textDark }]}>{t('labs_dir_badge')}</Text>
+                  </View>
+                </View>
+                <Text style={styles.cardSubtitle}>{t('labs_dir_sub')}</Text>
+              </View>
+              <ChevronRight size={16} color="#94A3B8" />
             </TouchableOpacity>
 
             {/* Card 4: BIS Services & Programmes */}
@@ -184,16 +265,26 @@ export default function HomeScreen() {
               onPress={() => router.push('/(tabs)/services')}
               activeOpacity={0.8}
             >
-              <Text style={styles.cardMainTitle}>BIS Services & Programmes</Text>
-              <Text style={styles.cardSubtitle}>Standards Clubs, NITS training, LRS lab scheme & certification</Text>
-              <ChevronRight size={16} color="#CBD5E1" style={styles.chevronPos} />
+              <View style={[styles.actionIconBox, { backgroundColor: Tints.purple.bg, borderColor: Tints.purple.border }]}>
+                <Award size={20} color={Tints.purple.text} />
+              </View>
+              <View style={{ flex: 1, gap: 2 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Text style={styles.cardMainTitle}>{t('services_programmes_title')}</Text>
+                  <View style={[styles.miniCategoryBadge, { backgroundColor: Tints.purple.bg }]}>
+                    <Text style={[styles.miniCategoryText, { color: Tints.purple.textDark }]}>{t('services_programmes_badge')}</Text>
+                  </View>
+                </View>
+                <Text style={styles.cardSubtitle}>{t('services_programmes_sub')}</Text>
+              </View>
+              <ChevronRight size={16} color="#94A3B8" />
             </TouchableOpacity>
           </View>
         </View>
 
         {/* 5. Citizen & Consumer Corner */}
         <View style={styles.consumerSection}>
-          <Text style={styles.sectionHeader}>Consumer Protection & Grievance Corner</Text>
+          <Text style={styles.sectionHeader}>{t('consumer_corner_title')}</Text>
           
           <View style={styles.consumerCard}>
             <View style={styles.consumerCardHeader}>
@@ -201,20 +292,20 @@ export default function HomeScreen() {
                 <Phone size={18} color="#0D9488" />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={styles.consumerCardTitle}>National Consumer Helpline</Text>
-                <Text style={styles.consumerCardPhone}>1800-11-4000 (Toll-Free)</Text>
+                <Text style={styles.consumerCardTitle}>{t('national_consumer_helpline')}</Text>
+                <Text style={styles.consumerCardPhone}>{t('toll_free')}</Text>
               </View>
               <TouchableOpacity 
                 style={styles.callBtn}
                 onPress={() => Linking.openURL('tel:1800114000')}
                 activeOpacity={0.8}
               >
-                <Text style={styles.callBtnText}>Call Now</Text>
+                <Text style={styles.callBtnText}>{t('call_now')}</Text>
               </TouchableOpacity>
             </View>
 
             <Text style={styles.consumerCardDesc}>
-              Report spurious ISI marks, substandard goods, or gold jewellery sold without mandatory 6-digit HUID code directly to BIS enforcement.
+              {t('consumer_card_desc')}
             </Text>
 
             <View style={styles.consumerLinksRow}>
@@ -223,7 +314,7 @@ export default function HomeScreen() {
                 onPress={() => Linking.openURL('https://www.services.bis.gov.in/php/BIS_2.0/dgasp/consumer_grievance.php')}
                 activeOpacity={0.7}
               >
-                <Text style={styles.consumerLinkText}>BIS Grievance Portal</Text>
+                <Text style={styles.consumerLinkText}>{t('bis_grievance_portal')}</Text>
                 <ExternalLink size={11} color="#0D9488" />
               </TouchableOpacity>
 
@@ -232,7 +323,7 @@ export default function HomeScreen() {
                 onPress={() => Linking.openURL('https://play.google.com/store/apps/details?id=com.bis.bis_care')}
                 activeOpacity={0.7}
               >
-                <Text style={styles.consumerLinkText}>Download BIS CARE App</Text>
+                <Text style={styles.consumerLinkText}>{t('download_bis_care')}</Text>
                 <ExternalLink size={11} color="#0D9488" />
               </TouchableOpacity>
             </View>
@@ -252,8 +343,8 @@ export default function HomeScreen() {
           <View style={styles.modalContainer}>
             <View style={styles.modalHeader}>
               <View>
-                <Text style={styles.modalTitle}>Notifications & BIS Briefs</Text>
-                <Text style={styles.modalSub}>Real-time Gazette updates & compliance circulars</Text>
+                <Text style={styles.modalTitle}>{t('notifications_briefs_title')}</Text>
+                <Text style={styles.modalSub}>{t('notifications_briefs_sub')}</Text>
               </View>
               <TouchableOpacity 
                 style={styles.modalCloseBtn}
@@ -306,15 +397,17 @@ const styles = StyleSheet.create({
   avatar: {
     width: 38,
     height: 38,
-    borderRadius: 8,
-    backgroundColor: '#0F172A',
+    borderRadius: 10,
+    backgroundColor: Colors.primaryMuted,
+    borderWidth: 1,
+    borderColor: Colors.primaryBorder,
     alignItems: 'center',
     justifyContent: 'center',
   },
   avatarText: {
     fontSize: 14,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: Colors.primary,
   },
   greetingTitle: {
     fontSize: 16,
@@ -341,7 +434,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -4,
     right: -4,
-    backgroundColor: '#0F172A',
+    backgroundColor: Colors.primary,
     borderRadius: 8,
     paddingHorizontal: 4,
     paddingVertical: 1,
@@ -362,11 +455,14 @@ const styles = StyleSheet.create({
   // Valid Enterprise Card
   enterpriseCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#E5E7EB',
+    borderLeftWidth: 4,
+    borderLeftColor: '#22C55E',
     padding: 16,
     gap: 12,
+    ...Shadows.sm,
   },
   cardHeaderRow: {
     flexDirection: 'row',
@@ -381,7 +477,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.8,
   },
   companyName: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '800',
     color: '#0F172A',
     marginTop: 2,
@@ -392,17 +488,15 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   statusPill: {
-    backgroundColor: '#ECFDF5',
+    backgroundColor: '#DCFCE7',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#A7F3D0',
   },
   statusPillText: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#047857',
+    color: '#166534',
   },
   cardDivider: {
     height: 1,
@@ -422,29 +516,44 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   productLinesBox: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#F9FAFB',
     borderRadius: 8,
     padding: 12,
     gap: 10,
     borderWidth: 1,
-    borderColor: '#F1F5F9',
+    borderColor: '#F3F4F6',
   },
   productLinesTitle: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#334155',
+    color: '#6B7280',
   },
   productItem: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     gap: 8,
   },
-  bulletPoint: {
-    width: 5,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: '#0F172A',
-    marginTop: 6,
+  validTagGreen: {
+    backgroundColor: '#DCFCE7',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  validTagGreenText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#166534',
+  },
+  validTagAmber: {
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  validTagAmberText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#B45309',
   },
   productItemName: {
     fontSize: 12,
@@ -453,7 +562,7 @@ const styles = StyleSheet.create({
   },
   productItemMeta: {
     fontSize: 10,
-    color: '#64748B',
+    color: '#6B7280',
     marginTop: 1,
   },
   productExpiry: {
@@ -465,39 +574,82 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 8,
+    paddingVertical: 10,
     paddingHorizontal: 12,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#FFFFFF',
     borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
   cardActionBtnText: {
     fontSize: 11,
-    fontWeight: '700',
-    color: '#0F172A',
+    fontWeight: '600',
+    color: '#374151',
   },
 
   // Hero Card
   heroAskCard: {
-    backgroundColor: '#0F172A',
-    borderRadius: 12,
+    backgroundColor: '#EBF5FF',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
     padding: 18,
     gap: 12,
+  },
+  heroTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  heroBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#DBEAFE',
+  },
+  heroBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#1D4ED8',
+  },
+  livePulseTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  pulseDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#16A34A',
+  },
+  livePulseText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#16A34A',
   },
   heroHeading: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#1D4ED8',
   },
   heroSubheading: {
     fontSize: 12,
-    color: '#94A3B8',
+    color: '#4B5563',
     lineHeight: 18,
   },
   fakeSearchTrigger: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
     paddingHorizontal: 12,
     paddingVertical: 10,
     gap: 8,
@@ -505,7 +657,26 @@ const styles = StyleSheet.create({
   fakeSearchPlaceholder: {
     flex: 1,
     fontSize: 12,
-    color: '#94A3B8',
+    color: '#6B7280',
+    fontWeight: '500',
+  },
+  heroChipsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+  },
+  heroChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  heroChipText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#374151',
   },
 
   // Quick Services
@@ -518,16 +689,36 @@ const styles = StyleSheet.create({
     color: '#0F172A',
   },
   gridContainer: {
-    gap: 8,
+    gap: 10,
   },
   actionCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 10,
+    borderRadius: 14,
     borderWidth: 1,
     borderColor: '#E2E8F0',
     padding: 14,
-    gap: 3,
-    position: 'relative',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    ...Shadows.sm,
+  },
+  actionIconBox: {
+    width: 42,
+    height: 42,
+    borderRadius: 10,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  miniCategoryBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  miniCategoryText: {
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.5,
   },
   cardMainTitle: {
     fontSize: 13,
@@ -537,12 +728,7 @@ const styles = StyleSheet.create({
   cardSubtitle: {
     fontSize: 11,
     color: '#64748B',
-    paddingRight: 24,
-  },
-  chevronPos: {
-    position: 'absolute',
-    right: 14,
-    top: 18,
+    lineHeight: 15,
   },
 
   // Consumer Section
@@ -551,12 +737,13 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   consumerCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    backgroundColor: '#F0FDFA',
+    borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#CCFBF1',
+    borderColor: '#99F6E4',
     padding: 16,
     gap: 10,
+    ...Shadows.sm,
   },
   consumerCardHeader: {
     flexDirection: 'row',
@@ -620,7 +807,7 @@ const styles = StyleSheet.create({
   // Modal
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.6)',
+    backgroundColor: 'rgba(15, 23, 42, 0.4)',
     justifyContent: 'flex-end',
   },
   modalContainer: {

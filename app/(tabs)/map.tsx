@@ -6,19 +6,22 @@ import {
   ScrollView, 
   TouchableOpacity, 
   SafeAreaView, 
-  Linking, 
-  Platform 
+  Linking 
 } from 'react-native';
-import { ExternalLink, Phone, Navigation } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
+import { Phone, ExternalLink, Settings } from 'lucide-react-native';
 import { TESTING_LABS } from '../../services/mockData';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function MapScreen() {
+  const router = useRouter();
+  const { t } = useLanguage();
   const [selectedRegion, setSelectedRegion] = useState<string>('All India');
-  const [selectedProduct, setSelectedProduct] = useState<string>('All Standards');
+  const [selectedProduct, setSelectedProduct] = useState<string>('All standards');
 
   const REGIONS = [
     'All India',
-    'Tamil Nadu (Current Location)',
+    'Tamil Nadu (current location)',
     'Delhi NCR',
     'Maharashtra',
     'Karnataka',
@@ -27,7 +30,7 @@ export default function MapScreen() {
   ];
 
   const PRODUCTS = [
-    'All Standards',
+    'All standards',
     'Helmets (IS 4151)',
     'Flasks (IS 17803)',
     'Batteries (IS 16046)',
@@ -38,10 +41,11 @@ export default function MapScreen() {
   const filteredLabs = TESTING_LABS.filter(lab => {
     // Region match
     let matchRegion = true;
-    if (selectedRegion === 'Tamil Nadu (Current Location)') {
+    if (selectedRegion === 'Tamil Nadu (current location)') {
       matchRegion = lab.state.includes('Tamil Nadu');
     } else if (selectedRegion !== 'All India') {
-      matchRegion = lab.state.includes(selectedRegion) || lab.city.includes(selectedRegion);
+      matchRegion = lab.state.toLowerCase().includes(selectedRegion.toLowerCase()) || 
+                    lab.city.toLowerCase().includes(selectedRegion.toLowerCase());
     }
 
     // Product match
@@ -63,22 +67,32 @@ export default function MapScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.title}>All-India Testing Laboratories Directory</Text>
+      {/* Fixed Top Header Panel with Top Right Settings Button */}
+      <View style={styles.topHeader}>
+        <View style={{ flex: 1, gap: 3, paddingRight: 12 }}>
+          <Text style={styles.title}>{t('labs_title')}</Text>
           <Text style={styles.subtitle}>
-            Official BIS-recognized & NABL-accredited (ISO/IEC 17025) testing facilities across India
+            {t('labs_sub')}
           </Text>
         </View>
+        <TouchableOpacity 
+          style={styles.settingsBtn}
+          onPress={() => router.push('/settings')}
+          activeOpacity={0.7}
+          accessibilityLabel="Settings"
+        >
+          <Settings size={18} color="#475569" />
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
         {/* Current Location & User Facility Banner */}
         <View style={styles.locationBanner}>
           <View style={styles.locationBannerTop}>
-            <Text style={styles.locationBannerLabel}>YOUR CURRENT REGISTERED FACILITY</Text>
+            <Text style={styles.locationBannerLabel}>{t('current_facility_label')}</Text>
             <View style={styles.activePill}>
-              <Text style={styles.activePillText}>Primary Facility</Text>
+              <Text style={styles.activePillText}>{t('primary_facility_badge')}</Text>
             </View>
           </View>
           <Text style={styles.facilityName}>Plot 42, SIDCO Guindy Industrial Estate, Chennai</Text>
@@ -89,49 +103,52 @@ export default function MapScreen() {
 
         {/* Filter 1: State / Region */}
         <View style={styles.filterSection}>
-          <Text style={styles.filterSectionTitle}>Filter by Region / State:</Text>
+          <Text style={styles.filterSectionTitle}>{t('filter_region')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRow}>
-            {REGIONS.map(reg => (
-              <TouchableOpacity
-                key={reg}
-                style={[styles.filterChip, selectedRegion === reg && styles.filterChipActive]}
-                onPress={() => setSelectedRegion(reg)}
-                activeOpacity={0.8}
-              >
-                <Text style={[styles.filterChipText, selectedRegion === reg && styles.filterChipTextActive]}>
-                  {reg}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            {REGIONS.map(reg => {
+              const isSelected = selectedRegion === reg;
+              return (
+                <TouchableOpacity
+                  key={reg}
+                  style={[styles.filterChip, isSelected && styles.filterChipActive]}
+                  onPress={() => setSelectedRegion(reg)}
+                  activeOpacity={0.8}
+                >
+                  <Text style={[styles.filterChipText, isSelected && styles.filterChipTextActive]}>
+                    {reg}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </ScrollView>
         </View>
 
         {/* Filter 2: Product Standard Scope */}
         <View style={styles.filterSection}>
-          <Text style={styles.filterSectionTitle}>Filter by Product Testing Scope:</Text>
+          <Text style={styles.filterSectionTitle}>{t('filter_scope')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRow}>
-            {PRODUCTS.map(prod => (
-              <TouchableOpacity
-                key={prod}
-                style={[styles.filterChip, selectedProduct === prod && styles.filterChipActive]}
-                onPress={() => setSelectedProduct(prod)}
-                activeOpacity={0.8}
-              >
-                <Text style={[styles.filterChipText, selectedProduct === prod && styles.filterChipTextActive]}>
-                  {prod}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            {PRODUCTS.map(prod => {
+              const isSelected = selectedProduct === prod;
+              return (
+                <TouchableOpacity
+                  key={prod}
+                  style={[styles.filterChip, isSelected && styles.filterChipActive]}
+                  onPress={() => setSelectedProduct(prod)}
+                  activeOpacity={0.8}
+                >
+                  <Text style={[styles.filterChipText, isSelected && styles.filterChipTextActive]}>
+                    {prod}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </ScrollView>
         </View>
 
         {/* Results Counter */}
         <View style={styles.resultsBar}>
           <Text style={styles.resultsCount}>
-            Showing {filteredLabs.length} Accredited Facilities
-          </Text>
-          <Text style={styles.resultsSub}>
-            {selectedRegion} · {selectedProduct}
+            {t('showing_facilities')}: {filteredLabs.length}
           </Text>
         </View>
 
@@ -139,15 +156,15 @@ export default function MapScreen() {
         <View style={styles.labsList}>
           {filteredLabs.length === 0 ? (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyStateTitle}>No Testing Facilities Found</Text>
+              <Text style={styles.emptyStateTitle}>No testing facilities found</Text>
               <Text style={styles.emptyStateDesc}>
                 No accredited lab in {selectedRegion} matches the scope "{selectedProduct}". Try switching region to "All India".
               </Text>
               <TouchableOpacity 
                 style={styles.resetBtn} 
-                onPress={() => { setSelectedRegion('All India'); setSelectedProduct('All Standards'); }}
+                onPress={() => { setSelectedRegion('All India'); setSelectedProduct('All standards'); }}
               >
-                <Text style={styles.resetBtnText}>Reset Filters to All India</Text>
+                <Text style={styles.resetBtnText}>Reset filters to All India</Text>
               </TouchableOpacity>
             </View>
           ) : (
@@ -160,14 +177,15 @@ export default function MapScreen() {
                   </View>
                   {lab.isCurrentLocation && (
                     <View style={styles.nearPill}>
-                      <Text style={styles.nearPillText}>Near You</Text>
+                      <Text style={styles.nearPillText}>{t('near_you')}</Text>
                     </View>
                   )}
                 </View>
 
                 {lab.distance && (
                   <Text style={styles.distanceLine}>
-                    Proximity: <Text style={styles.distanceVal}>{lab.distance}</Text>
+                    <Text style={styles.distanceVal}>{t('proximity')}: </Text>
+                    {lab.distance}
                   </Text>
                 )}
 
@@ -175,12 +193,10 @@ export default function MapScreen() {
                   <Text style={styles.accreditationText}>{lab.accreditation}</Text>
                 </View>
 
-                <View style={styles.addressLine}>
-                  <Text style={styles.addressText}>{lab.address}</Text>
-                </View>
+                <Text style={styles.addressText}>{lab.address}</Text>
 
                 <View style={styles.scopeContainer}>
-                  <Text style={styles.scopeHeader}>Accredited Testing Scope:</Text>
+                  <Text style={styles.scopeHeader}>{t('accredited_scope_label')}</Text>
                   <View style={styles.scopeChips}>
                     {lab.scope.map((s, idx) => (
                       <View key={idx} style={styles.scopeChip}>
@@ -196,7 +212,7 @@ export default function MapScreen() {
                     onPress={() => Linking.openURL(`tel:${lab.contact}`)}
                     activeOpacity={0.8}
                   >
-                    <Phone size={13} color="#0F172A" />
+                    <Phone size={12} color="#0F172A" />
                     <Text style={styles.callBtnText}>{lab.contact}</Text>
                   </TouchableOpacity>
 
@@ -205,9 +221,8 @@ export default function MapScreen() {
                     onPress={() => Linking.openURL(`https://maps.google.com/?q=${encodeURIComponent(lab.name + ' ' + lab.address)}`)}
                     activeOpacity={0.8}
                   >
-                    <Navigation size={13} color="#FFFFFF" />
-                    <Text style={styles.mapsBtnText}>Open in Google Maps</Text>
                     <ExternalLink size={12} color="#FFFFFF" />
+                    <Text style={styles.mapsBtnText}>{t('open_google_maps')}</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -230,27 +245,52 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     gap: 14,
   },
+  topHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
+  },
   header: {
-    gap: 4,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  settingsBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
     fontSize: 20,
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#0F172A',
   },
   subtitle: {
     fontSize: 12,
-    color: '#64748B',
+    color: '#6B7280',
     lineHeight: 18,
   },
 
   // Location Banner
   locationBanner: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    padding: 14,
+    borderColor: '#E5E7EB',
+    borderLeftWidth: 4,
+    borderLeftColor: '#22C55E',
+    padding: 16,
     gap: 6,
   },
   locationBannerTop: {
@@ -259,31 +299,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   locationBannerLabel: {
-    fontSize: 9,
-    fontWeight: '800',
-    color: '#64748B',
-    letterSpacing: 0.6,
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#166534',
+    letterSpacing: 0.5,
   },
   activePill: {
     backgroundColor: '#ECFDF5',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
   },
   activePillText: {
-    fontSize: 9,
+    fontSize: 10,
     fontWeight: '700',
-    color: '#047857',
+    color: '#166534',
   },
   facilityName: {
-    fontSize: 13,
-    fontWeight: '800',
+    fontSize: 14,
+    fontWeight: '700',
     color: '#0F172A',
   },
   facilityDesc: {
     fontSize: 11,
-    color: '#475569',
-    lineHeight: 16,
+    color: '#4B5563',
+    lineHeight: 17,
   },
 
   // Filter Sections
@@ -291,50 +331,43 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   filterSectionTitle: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '700',
-    color: '#334155',
+    color: '#0F172A',
   },
   filterRow: {
     gap: 6,
     paddingRight: 10,
   },
   filterChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 20,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#CBD5E1',
+    borderColor: '#E5E7EB',
   },
   filterChipActive: {
-    backgroundColor: '#0F172A',
-    borderColor: '#0F172A',
+    borderColor: '#1565C0',
+    borderWidth: 1.5,
   },
   filterChipText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#475569',
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#4B5563',
   },
   filterChipTextActive: {
-    color: '#FFFFFF',
+    color: '#1565C0',
     fontWeight: '700',
   },
 
   resultsBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: 4,
+    paddingTop: 2,
   },
   resultsCount: {
-    fontSize: 12,
-    fontWeight: '800',
+    fontSize: 13,
+    fontWeight: '700',
     color: '#0F172A',
-  },
-  resultsSub: {
-    fontSize: 11,
-    color: '#64748B',
   },
 
   // Labs List
@@ -344,10 +377,10 @@ const styles = StyleSheet.create({
   labCard: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 12,
+    borderColor: '#E5E7EB',
+    borderRadius: 8,
     padding: 16,
-    gap: 10,
+    gap: 8,
   },
   labHeader: {
     flexDirection: 'row',
@@ -357,84 +390,83 @@ const styles = StyleSheet.create({
   },
   labName: {
     fontSize: 14,
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#0F172A',
     lineHeight: 19,
   },
   labCityState: {
     fontSize: 11,
-    color: '#64748B',
+    color: '#6B7280',
     marginTop: 2,
   },
   nearPill: {
-    backgroundColor: '#0F172A',
+    backgroundColor: '#ECFDF5',
     paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingVertical: 3,
     borderRadius: 6,
   },
   nearPillText: {
     fontSize: 10,
-    fontWeight: '800',
-    color: '#FFFFFF',
+    fontWeight: '700',
+    color: '#166534',
   },
   distanceLine: {
-    fontSize: 11,
-    color: '#64748B',
+    fontSize: 12,
+    color: '#0F172A',
   },
   distanceVal: {
     fontWeight: '700',
     color: '#0F172A',
   },
   accreditationBox: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#EFF6FF',
     borderRadius: 6,
     paddingHorizontal: 8,
     paddingVertical: 4,
     alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
   },
   accreditationText: {
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: '700',
-    color: '#0F172A',
-  },
-  addressLine: {
-    paddingVertical: 2,
+    color: '#1565C0',
   },
   addressText: {
     fontSize: 11,
-    color: '#475569',
+    color: '#4B5563',
     lineHeight: 16,
   },
   scopeContainer: {
     gap: 4,
+    marginTop: 2,
   },
   scopeHeader: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#64748B',
+    color: '#6B7280',
+    letterSpacing: 0.5,
   },
   scopeChips: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 4,
+    gap: 6,
   },
   scopeChip: {
-    backgroundColor: '#F1F5F9',
-    paddingHorizontal: 7,
+    backgroundColor: '#EFF6FF',
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+    paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 4,
+    borderRadius: 6,
   },
   scopeText: {
-    fontSize: 10,
-    color: '#334155',
+    fontSize: 11,
+    color: '#1565C0',
     fontWeight: '500',
   },
   actionRow: {
     flexDirection: 'row',
     gap: 8,
-    marginTop: 4,
+    marginTop: 6,
   },
   callBtn: {
     flex: 1,
@@ -442,29 +474,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#FFFFFF',
     paddingVertical: 9,
-    borderRadius: 8,
+    borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#E5E7EB',
   },
   callBtnText: {
-    fontSize: 11,
-    fontWeight: '700',
+    fontSize: 12,
+    fontWeight: '600',
     color: '#0F172A',
   },
   mapsBtn: {
-    flex: 1.3,
+    flex: 1.4,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#1565C0',
     paddingVertical: 9,
-    borderRadius: 8,
+    borderRadius: 6,
   },
   mapsBtnText: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '700',
     color: '#FFFFFF',
   },
@@ -472,27 +504,27 @@ const styles = StyleSheet.create({
   // Empty State
   emptyState: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#E5E7EB',
     padding: 24,
     alignItems: 'center',
     gap: 8,
   },
   emptyStateTitle: {
     fontSize: 14,
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#0F172A',
   },
   emptyStateDesc: {
     fontSize: 11,
-    color: '#64748B',
+    color: '#6B7280',
     textAlign: 'center',
     lineHeight: 16,
   },
   resetBtn: {
     marginTop: 8,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#1565C0',
     paddingHorizontal: 16,
     paddingVertical: 9,
     borderRadius: 8,
