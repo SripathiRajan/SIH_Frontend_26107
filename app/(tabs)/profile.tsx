@@ -10,34 +10,23 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import {
-  Building2,
   Settings,
-  MapPin,
-  CheckCircle2,
   ChevronRight,
-  ShieldCheck,
-  Award,
-  Calendar,
   Phone,
   Mail,
   FileText,
-  Clock,
-  ExternalLink,
-  BadgeCheck,
-  UserCheck,
-  Layers,
   ArrowUpRight,
 } from 'lucide-react-native';
 
-// ─── Data Definitions ──────────────────────────────────────────────────────────
+// ─── Data ─────────────────────────────────────────────────────────────────────
 const COMPANY_INFO = {
   name: 'Apex Safety Gear & Flasks Pvt. Ltd.',
   udyam: 'UDYAM-TN-02-0049281',
-  regType: 'Verified MSME (Manufacturing)',
+  category: 'MSME Manufacturing',
+  status: 'Active BIS Licensee',
   signatory: 'Sripathinathan R. (Managing Director)',
   address: 'Plot 42, SIDCO Guindy, Chennai - 600 032, Tamil Nadu',
   complianceScore: 96,
-  status: 'Compliant & Active',
 };
 
 const LICENSES = [
@@ -49,11 +38,9 @@ const LICENSES = [
     scheme: 'Scheme-I (ISI Mark)',
     brand: 'APEX-SHIELD',
     validTill: '31-Dec-2027',
-    status: 'Active',
     factory: 'Plot 42, SIDCO Guindy, Chennai',
     labClearance: 'NTH Chennai (Oct 2024)',
     nextAudit: '18-Nov-2024',
-    daysLeft: 1188,
   },
   {
     id: 'lic-2',
@@ -63,21 +50,19 @@ const LICENSES = [
     scheme: 'Scheme-I (ISI Mark)',
     brand: 'APEX-PURE',
     validTill: '15-Oct-2026',
-    status: 'Active',
     factory: 'Unit-B, SIDCO Guindy, Chennai',
     labClearance: 'CSIR-CECRI (Dec 2023)',
     nextAudit: '02-Jan-2025',
-    daysLeft: 385,
   },
 ];
 
 const AUDIT_STEPS = [
-  { title: 'Initial Application & Scrutiny', date: 'Nov 2021', completed: true },
-  { title: 'Factory Technical Inspection', date: 'Dec 2021', completed: true },
-  { title: 'NTH Sample Testing Clearance', date: 'Jan 2022', completed: true },
-  { title: 'ISI Mark License Grant', date: 'Jan 2022', completed: true },
-  { title: 'Annual Surveillance Audit (Upcoming)', date: '18-Nov-2024', completed: false, active: true },
-  { title: 'License Renewal Cycle', date: '31-Dec-2027', completed: false },
+  { title: 'Initial Application & Scrutiny', date: 'Nov 2021', status: 'Completed' },
+  { title: 'Factory Technical Inspection', date: 'Dec 2021', status: 'Completed' },
+  { title: 'NTH Sample Testing Clearance', date: 'Jan 2022', status: 'Completed' },
+  { title: 'ISI Mark License Grant', date: 'Jan 2022', status: 'Completed' },
+  { title: 'Annual Surveillance Audit', date: '18-Nov-2024', status: 'Upcoming (54 Days)' },
+  { title: 'License Renewal Cycle', date: '31-Dec-2027', status: 'Scheduled' },
 ];
 
 const BIS_OFFICER = {
@@ -90,7 +75,7 @@ const BIS_OFFICER = {
   hours: 'Mon - Fri · 09:30 AM - 05:30 PM',
 };
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+// ─── Main Screen ──────────────────────────────────────────────────────────────
 export default function ProfileScreen() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'licenses' | 'audit' | 'officer'>('licenses');
@@ -106,136 +91,121 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* 1. Header */}
-      <View style={styles.header}>
+      {/* Top Header */}
+      <View style={styles.topHeader}>
         <View>
-          <Text style={styles.headerTitle}>Enterprise Credentials</Text>
-          <Text style={styles.headerSubtitle}>BIS Licensee Registry & Compliance Profile</Text>
+          <Text style={styles.screenTitle}>Enterprise Credentials</Text>
+          <Text style={styles.screenSubtitle}>BIS Licensee Registry & Compliance Records</Text>
         </View>
         <TouchableOpacity
-          style={styles.settingsIconBtn}
+          style={styles.settingsBtn}
           onPress={() => router.push('/settings')}
           activeOpacity={0.7}
           accessibilityLabel="Settings"
         >
-          <Settings size={20} color="#334155" />
+          <Settings size={18} color="#475569" />
         </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-        {/* 2. Enterprise Master Card */}
+        
+        {/* Enterprise Profile Card (Clean typography, no toy icon boxes or emoji pills) */}
         <View style={styles.enterpriseCard}>
-          <View style={styles.cardTopRow}>
-            <View style={styles.logoBadge}>
-              <Building2 size={24} color="#1E3A8A" />
+          <View style={styles.titleSection}>
+            <Text style={styles.companyName}>{COMPANY_INFO.name}</Text>
+            <Text style={styles.companySub}>
+              {COMPANY_INFO.udyam}  ·  {COMPANY_INFO.category}
+            </Text>
+            <Text style={styles.statusText}>
+              Status: {COMPANY_INFO.status}
+            </Text>
+          </View>
+
+          <View style={styles.divider} />
+
+          <View style={styles.infoGrid}>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Authorized Signatory</Text>
+              <Text style={styles.infoValue}>{COMPANY_INFO.signatory}</Text>
             </View>
-            <View style={styles.topInfo}>
-              <View style={styles.statusBadgeRow}>
-                <View style={styles.activePill}>
-                  <View style={styles.activeDot} />
-                  <Text style={styles.activeText}>ACTIVE LICENSEE</Text>
-                </View>
-                <View style={styles.msmePill}>
-                  <BadgeCheck size={11} color="#059669" />
-                  <Text style={styles.msmeText}>Verified MSME</Text>
-                </View>
-              </View>
-              <Text style={styles.companyTitle}>{COMPANY_INFO.name}</Text>
-              <Text style={styles.udyamCode}>{COMPANY_INFO.udyam}</Text>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Factory Premises</Text>
+              <Text style={styles.infoValue}>{COMPANY_INFO.address}</Text>
             </View>
           </View>
 
-          <View style={styles.metaRow}>
-            <View style={styles.metaItem}>
-              <UserCheck size={12} color="#64748B" />
-              <Text style={styles.metaText}>{COMPANY_INFO.signatory}</Text>
+          {/* Clean Metric Row */}
+          <View style={styles.metricsRow}>
+            <View style={styles.metricItem}>
+              <Text style={styles.metricNum}>{COMPANY_INFO.complianceScore}/100</Text>
+              <Text style={styles.metricText}>Audit Score</Text>
             </View>
-            <View style={styles.metaItem}>
-              <MapPin size={12} color="#64748B" />
-              <Text style={styles.metaText} numberOfLines={1}>{COMPANY_INFO.address}</Text>
+            <View style={styles.metricSeparator} />
+            <View style={styles.metricItem}>
+              <Text style={styles.metricNum}>2</Text>
+              <Text style={styles.metricText}>Active Licenses</Text>
             </View>
-          </View>
-
-          {/* Quick Metrics Bar */}
-          <View style={styles.metricsBar}>
-            <View style={styles.metricCell}>
-              <Text style={styles.metricValue}>96<Text style={styles.metricUnit}>/100</Text></Text>
-              <Text style={styles.metricLabel}>Audit Score</Text>
-            </View>
-            <View style={styles.metricDivider} />
-            <View style={styles.metricCell}>
-              <Text style={styles.metricValue}>2</Text>
-              <Text style={styles.metricLabel}>Active CM/L</Text>
-            </View>
-            <View style={styles.metricDivider} />
-            <View style={styles.metricCell}>
-              <Text style={[styles.metricValue, { color: '#B45309' }]}>18 Nov</Text>
-              <Text style={styles.metricLabel}>Surveillance</Text>
+            <View style={styles.metricSeparator} />
+            <View style={styles.metricItem}>
+              <Text style={styles.metricNum}>18-Nov-2024</Text>
+              <Text style={styles.metricText}>Next Surveillance</Text>
             </View>
           </View>
         </View>
 
-        {/* 3. Segmented Navigation Tabs */}
-        <View style={styles.tabContainer}>
+        {/* Clean Segmented Control (Text-only, no emoji-like icons) */}
+        <View style={styles.segmentedControl}>
           <TouchableOpacity
-            style={[styles.tabButton, activeTab === 'licenses' && styles.tabButtonActive]}
+            style={[styles.segmentBtn, activeTab === 'licenses' && styles.segmentBtnActive]}
             onPress={() => setActiveTab('licenses')}
             activeOpacity={0.8}
           >
-            <Award size={15} color={activeTab === 'licenses' ? '#1E3A8A' : '#64748B'} />
-            <Text style={[styles.tabText, activeTab === 'licenses' && styles.tabTextActive]}>
+            <Text style={[styles.segmentText, activeTab === 'licenses' && styles.segmentTextActive]}>
               Licenses ({LICENSES.length})
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.tabButton, activeTab === 'audit' && styles.tabButtonActive]}
+            style={[styles.segmentBtn, activeTab === 'audit' && styles.segmentBtnActive]}
             onPress={() => setActiveTab('audit')}
             activeOpacity={0.8}
           >
-            <Clock size={15} color={activeTab === 'audit' ? '#1E3A8A' : '#64748B'} />
-            <Text style={[styles.tabText, activeTab === 'audit' && styles.tabTextActive]}>
+            <Text style={[styles.segmentText, activeTab === 'audit' && styles.segmentTextActive]}>
               Audit & Visits
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.tabButton, activeTab === 'officer' && styles.tabButtonActive]}
+            style={[styles.segmentBtn, activeTab === 'officer' && styles.segmentBtnActive]}
             onPress={() => setActiveTab('officer')}
             activeOpacity={0.8}
           >
-            <Layers size={15} color={activeTab === 'officer' ? '#1E3A8A' : '#64748B'} />
-            <Text style={[styles.tabText, activeTab === 'officer' && styles.tabTextActive]}>
+            <Text style={[styles.segmentText, activeTab === 'officer' && styles.segmentTextActive]}>
               BIS Officer
             </Text>
           </TouchableOpacity>
         </View>
 
-        {/* 4. Tab Content: Licenses */}
+        {/* Tab 1: Licenses */}
         {activeTab === 'licenses' && (
-          <View style={styles.tabSection}>
+          <View style={styles.tabContent}>
             {LICENSES.map((lic) => {
               const isExpanded = expandedLic === lic.id;
               return (
                 <View key={lic.id} style={styles.licenseCard}>
-                  {/* Header Row */}
                   <TouchableOpacity
                     style={styles.licenseHeader}
                     onPress={() => setExpandedLic(isExpanded ? null : lic.id)}
                     activeOpacity={0.7}
                   >
-                    <View style={styles.licenseHeaderLeft}>
-                      <View style={styles.schemeTag}>
-                        <ShieldCheck size={12} color="#1E3A8A" />
-                        <Text style={styles.schemeTagText}>{lic.scheme}</Text>
-                      </View>
-                      <Text style={styles.licenseNum}>{lic.cmNumber}</Text>
-                      <Text style={styles.productName}>{lic.product}</Text>
+                    <View style={styles.licenseMain}>
+                      <Text style={styles.schemeLabel}>{lic.scheme}</Text>
+                      <Text style={styles.licenseCode}>{lic.cmNumber}</Text>
+                      <Text style={styles.productTitle}>{lic.product}</Text>
+                      <Text style={styles.standardMeta}>{lic.standard} · Brand: {lic.brand}</Text>
                     </View>
-                    <View style={styles.licenseHeaderRight}>
-                      <View style={styles.validityBadge}>
-                        <Text style={styles.validityText}>Valid till {lic.validTill.split('-')[2]}</Text>
-                      </View>
+                    <View style={styles.licenseSide}>
+                      <Text style={styles.validUntilText}>Valid till {lic.validTill}</Text>
                       <ChevronRight
                         size={16}
                         color="#64748B"
@@ -244,52 +214,41 @@ export default function ProfileScreen() {
                     </View>
                   </TouchableOpacity>
 
-                  {/* Standard & Quick Tags */}
-                  <View style={styles.tagRow}>
-                    <View style={styles.standardPill}>
-                      <Text style={styles.standardPillText}>{lic.standard}</Text>
-                    </View>
-                    <View style={styles.brandPill}>
-                      <Text style={styles.brandPillText}>Brand: {lic.brand}</Text>
-                    </View>
-                  </View>
-
-                  {/* Expanded Details */}
                   {isExpanded && (
-                    <View style={styles.expandedDetails}>
-                      <View style={styles.detailDivider} />
-                      <View style={styles.detailRow}>
-                        <Text style={styles.detailLabel}>Factory Location</Text>
-                        <Text style={styles.detailValue}>{lic.factory}</Text>
+                    <View style={styles.licenseExpanded}>
+                      <View style={styles.divider} />
+                      <View style={styles.detailLine}>
+                        <Text style={styles.detailKey}>Factory Unit</Text>
+                        <Text style={styles.detailVal}>{lic.factory}</Text>
                       </View>
-                      <View style={styles.detailRow}>
-                        <Text style={styles.detailLabel}>Latest Lab Clearance</Text>
-                        <Text style={styles.detailValue}>{lic.labClearance}</Text>
+                      <View style={styles.detailLine}>
+                        <Text style={styles.detailKey}>Lab Clearance</Text>
+                        <Text style={styles.detailVal}>{lic.labClearance}</Text>
                       </View>
-                      <View style={styles.detailRow}>
-                        <Text style={styles.detailLabel}>Next Surveillance Audit</Text>
-                        <Text style={[styles.detailValue, { color: '#B45309', fontWeight: '700' }]}>
+                      <View style={styles.detailLine}>
+                        <Text style={styles.detailKey}>Surveillance Visit</Text>
+                        <Text style={[styles.detailVal, { color: '#0F172A', fontWeight: '700' }]}>
                           {lic.nextAudit}
                         </Text>
                       </View>
 
-                      {/* Action Buttons */}
-                      <View style={styles.cardActionRow}>
+                      <View style={styles.actionRow}>
                         <TouchableOpacity
-                          style={styles.primaryActionBtn}
+                          style={styles.primaryBtn}
                           onPress={() => router.push('/vault')}
                           activeOpacity={0.8}
                         >
-                          <FileText size={13} color="#FFFFFF" />
-                          <Text style={styles.primaryActionText}>View Certificate (PDF)</Text>
+                          <FileText size={14} color="#FFFFFF" />
+                          <Text style={styles.primaryBtnText}>View License Certificate</Text>
                         </TouchableOpacity>
+
                         <TouchableOpacity
-                          style={styles.secondaryActionBtn}
+                          style={styles.secondaryBtn}
                           onPress={() => router.push('/(tabs)/standards')}
                           activeOpacity={0.8}
                         >
-                          <Text style={styles.secondaryActionText}>Standard Details</Text>
-                          <ArrowUpRight size={13} color="#1E3A8A" />
+                          <Text style={styles.secondaryBtnText}>Standard Specifications</Text>
+                          <ArrowUpRight size={14} color="#0F172A" />
                         </TouchableOpacity>
                       </View>
                     </View>
@@ -300,132 +259,88 @@ export default function ProfileScreen() {
           </View>
         )}
 
-        {/* 5. Tab Content: Audit & Visits */}
+        {/* Tab 2: Audit & Visits */}
         {activeTab === 'audit' && (
-          <View style={styles.tabSection}>
-            {/* Urgent Alert Banner */}
-            <View style={styles.auditAlertCard}>
-              <View style={styles.alertHeader}>
-                <Calendar size={18} color="#B45309" />
-                <Text style={styles.alertTitle}>Surveillance Audit: 18-Nov-2024</Text>
-              </View>
-              <Text style={styles.alertDesc}>
-                Surveillance inspection for IS 4151 (Motorcycle Helmets) by Chennai Branch Office (CNBO).
-                Keep calibration registers, batch testing sheets, and NTH test records accessible in the Document Vault.
+          <View style={styles.tabContent}>
+            {/* Notice */}
+            <View style={styles.auditNotice}>
+              <Text style={styles.auditNoticeTitle}>Next Audit: 18-Nov-2024</Text>
+              <Text style={styles.auditNoticeDesc}>
+                Surveillance inspection for IS 4151 (Two-Wheeler Helmets) scheduled by CNBO.
+                Maintain test logs and factory calibration registers in the Document Vault.
               </Text>
               <TouchableOpacity
-                style={styles.alertActionBtn}
+                style={styles.auditNoticeBtn}
                 onPress={() => router.push('/vault')}
                 activeOpacity={0.8}
               >
-                <Text style={styles.alertActionText}>Open Vault for Audit Preparation</Text>
-                <ChevronRight size={14} color="#92400E" />
+                <Text style={styles.auditNoticeBtnText}>Prepare Audit Documents</Text>
+                <ChevronRight size={14} color="#0F172A" />
               </TouchableOpacity>
             </View>
 
-            {/* Stepper Timeline */}
-            <View style={styles.timelineBox}>
-              <Text style={styles.timelineBoxTitle}>Certification Lifecycle</Text>
+            {/* Stepper list */}
+            <View style={styles.lifecycleCard}>
+              <Text style={styles.lifecycleTitle}>Compliance Lifecycle</Text>
               {AUDIT_STEPS.map((step, idx) => (
-                <View key={idx} style={styles.timelineItem}>
-                  <View style={styles.connectorCol}>
-                    <View
-                      style={[
-                        styles.stepDot,
-                        step.completed && styles.stepDotCompleted,
-                        step.active && styles.stepDotActive,
-                      ]}
-                    >
-                      {step.completed ? (
-                        <CheckCircle2 size={12} color="#FFFFFF" />
-                      ) : (
-                        <Clock size={10} color={step.active ? '#B45309' : '#94A3B8'} />
-                      )}
-                    </View>
-                    {idx < AUDIT_STEPS.length - 1 && (
-                      <View
-                        style={[
-                          styles.stepLine,
-                          step.completed && styles.stepLineCompleted,
-                        ]}
-                      />
-                    )}
+                <View key={idx} style={styles.lifecycleRow}>
+                  <View style={styles.stepNumBox}>
+                    <Text style={styles.stepNumText}>{idx + 1}</Text>
                   </View>
-                  <View style={styles.stepInfo}>
-                    <Text
-                      style={[
-                        styles.stepTitle,
-                        step.active && styles.stepTitleActive,
-                      ]}
-                    >
-                      {step.title}
-                    </Text>
-                    <Text style={styles.stepDate}>{step.date}</Text>
+                  <View style={styles.stepDetail}>
+                    <Text style={styles.stepName}>{step.title}</Text>
+                    <Text style={styles.stepSub}>{step.date} · {step.status}</Text>
                   </View>
-                  {step.active && (
-                    <View style={styles.upcomingPill}>
-                      <Text style={styles.upcomingPillText}>IN 54 DAYS</Text>
-                    </View>
-                  )}
                 </View>
               ))}
             </View>
           </View>
         )}
 
-        {/* 6. Tab Content: BIS Officer */}
+        {/* Tab 3: BIS Officer */}
         {activeTab === 'officer' && (
-          <View style={styles.tabSection}>
+          <View style={styles.tabContent}>
             <View style={styles.officerCard}>
-              <View style={styles.officerHeader}>
-                <View style={styles.officerAvatar}>
-                  <Text style={styles.officerInitials}>KR</Text>
-                </View>
-                <View style={styles.officerMain}>
-                  <Text style={styles.officerName}>{BIS_OFFICER.name}</Text>
-                  <Text style={styles.officerTitle}>{BIS_OFFICER.title}</Text>
-                  <Text style={styles.officerDept}>{BIS_OFFICER.dept}</Text>
-                </View>
+              <Text style={styles.officerName}>{BIS_OFFICER.name}</Text>
+              <Text style={styles.officerRole}>{BIS_OFFICER.title}</Text>
+              <Text style={styles.officerDept}>{BIS_OFFICER.dept}</Text>
+
+              <View style={styles.divider} />
+
+              <View style={styles.detailLine}>
+                <Text style={styles.detailKey}>Branch Office</Text>
+                <Text style={styles.detailVal}>{BIS_OFFICER.office}</Text>
+              </View>
+              <View style={styles.detailLine}>
+                <Text style={styles.detailKey}>Office Hours</Text>
+                <Text style={styles.detailVal}>{BIS_OFFICER.hours}</Text>
               </View>
 
-              <View style={styles.officerInfoRow}>
-                <MapPin size={13} color="#64748B" />
-                <Text style={styles.officerInfoText}>{BIS_OFFICER.office}</Text>
-              </View>
-
-              <View style={styles.officerInfoRow}>
-                <Clock size={13} color="#64748B" />
-                <Text style={styles.officerInfoText}>{BIS_OFFICER.hours}</Text>
-              </View>
-
-              {/* Action Buttons */}
-              <View style={styles.contactRow}>
+              <View style={styles.officerActionRow}>
                 <TouchableOpacity
-                  style={styles.contactBtn}
+                  style={styles.officerBtn}
                   onPress={() => openPhone(BIS_OFFICER.phone)}
                   activeOpacity={0.8}
                 >
-                  <Phone size={14} color="#1E3A8A" />
-                  <Text style={styles.contactBtnText}>Call Branch</Text>
+                  <Phone size={14} color="#0F172A" />
+                  <Text style={styles.officerBtnText}>{BIS_OFFICER.phone}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={styles.contactBtn}
+                  style={styles.officerBtn}
                   onPress={() => openEmail(BIS_OFFICER.email)}
                   activeOpacity={0.8}
                 >
-                  <Mail size={14} color="#1E3A8A" />
-                  <Text style={styles.contactBtnText}>Send Email</Text>
+                  <Mail size={14} color="#0F172A" />
+                  <Text style={styles.officerBtnText}>Email Branch</Text>
                 </TouchableOpacity>
               </View>
             </View>
 
-            {/* Jurisdiction Notice */}
-            <View style={styles.noticeBox}>
-              <ShieldCheck size={14} color="#059669" />
-              <Text style={styles.noticeText}>
-                Official BIS jurisdiction assigned according to factory location (SIDCO Guindy, Chennai).
-                All surveillance sample receipts must be stamped by CNBO.
+            <View style={styles.jurisdictionBox}>
+              <Text style={styles.jurisdictionText}>
+                Jurisdiction assigned according to registered factory location at SIDCO Guindy, Chennai.
+                All audit documentation must be authenticated by the Chennai Branch Office.
               </Text>
             </View>
           </View>
@@ -442,7 +357,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8FAFC',
   },
-  header: {
+  topHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -452,20 +367,20 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#E2E8F0',
   },
-  headerTitle: {
+  screenTitle: {
     fontSize: 18,
     fontWeight: '800',
     color: '#0F172A',
   },
-  headerSubtitle: {
-    fontSize: 11,
+  screenSubtitle: {
+    fontSize: 12,
     color: '#64748B',
     marginTop: 2,
   },
-  settingsIconBtn: {
-    width: 38,
-    height: 38,
-    borderRadius: 10,
+  settingsBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
     backgroundColor: '#F1F5F9',
     alignItems: 'center',
     justifyContent: 'center',
@@ -481,189 +396,123 @@ const styles = StyleSheet.create({
   // Enterprise Card
   enterpriseCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
+    borderRadius: 12,
+    padding: 18,
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
-    elevation: 2,
     gap: 12,
   },
-  cardTopRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 12,
-  },
-  logoBadge: {
-    width: 46,
-    height: 46,
-    borderRadius: 12,
-    backgroundColor: '#EEF2FF',
-    borderWidth: 1,
-    borderColor: '#C7D2FE',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  topInfo: {
-    flex: 1,
-    gap: 3,
-  },
-  statusBadgeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: 2,
-  },
-  activePill: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  titleSection: {
     gap: 4,
-    backgroundColor: '#ECFDF5',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 6,
   },
-  activeDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: '#10B981',
-  },
-  activeText: {
-    fontSize: 8,
-    fontWeight: '800',
-    color: '#047857',
-    letterSpacing: 0.5,
-  },
-  msmePill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 3,
-    backgroundColor: '#F0FDF4',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#BBF7D0',
-  },
-  msmeText: {
-    fontSize: 9,
-    fontWeight: '700',
-    color: '#15803D',
-  },
-  companyTitle: {
-    fontSize: 14,
+  companyName: {
+    fontSize: 16,
     fontWeight: '800',
     color: '#0F172A',
-    lineHeight: 18,
+    lineHeight: 22,
   },
-  udyamCode: {
-    fontSize: 10,
+  companySub: {
+    fontSize: 12,
+    color: '#475569',
+  },
+  statusText: {
+    fontSize: 12,
     fontWeight: '700',
-    color: '#1E3A8A',
-    fontFamily: 'monospace',
+    color: '#047857',
+    marginTop: 2,
   },
-  metaRow: {
-    gap: 4,
-    paddingTop: 4,
-    borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
+  divider: {
+    height: 1,
+    backgroundColor: '#F1F5F9',
+    marginVertical: 4,
   },
-  metaItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
+  infoGrid: {
+    gap: 8,
   },
-  metaText: {
+  infoRow: {
+    gap: 2,
+  },
+  infoLabel: {
     fontSize: 11,
     color: '#64748B',
-    flex: 1,
+    fontWeight: '500',
   },
-  metricsBar: {
+  infoValue: {
+    fontSize: 12,
+    color: '#0F172A',
+    fontWeight: '600',
+  },
+  metricsRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#F8FAFC',
-    borderRadius: 10,
-    paddingVertical: 10,
+    borderRadius: 8,
+    paddingVertical: 12,
     paddingHorizontal: 12,
     borderWidth: 1,
     borderColor: '#F1F5F9',
+    marginTop: 4,
   },
-  metricCell: {
+  metricItem: {
     flex: 1,
     alignItems: 'center',
-    gap: 2,
+    gap: 3,
   },
-  metricValue: {
-    fontSize: 16,
+  metricNum: {
+    fontSize: 15,
     fontWeight: '800',
     color: '#0F172A',
   },
-  metricUnit: {
-    fontSize: 10,
-    fontWeight: '600',
+  metricText: {
+    fontSize: 11,
     color: '#64748B',
+    fontWeight: '500',
   },
-  metricLabel: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: '#64748B',
-  },
-  metricDivider: {
+  metricSeparator: {
     width: 1,
-    height: 26,
+    height: 24,
     backgroundColor: '#E2E8F0',
   },
 
-  // Segmented Tabs
-  tabContainer: {
+  // Segmented Control
+  segmentedControl: {
     flexDirection: 'row',
     backgroundColor: '#E2E8F0',
-    borderRadius: 12,
+    borderRadius: 8,
     padding: 3,
     gap: 4,
   },
-  tabButton: {
+  segmentBtn: {
     flex: 1,
-    flexDirection: 'row',
+    paddingVertical: 8,
+    borderRadius: 6,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
-    paddingVertical: 8,
-    borderRadius: 9,
   },
-  tabButtonActive: {
+  segmentBtnActive: {
     backgroundColor: '#FFFFFF',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 2,
-    elevation: 1,
   },
-  tabText: {
-    fontSize: 11,
+  segmentText: {
+    fontSize: 12,
     fontWeight: '600',
     color: '#64748B',
   },
-  tabTextActive: {
+  segmentTextActive: {
     fontWeight: '800',
-    color: '#1E3A8A',
+    color: '#0F172A',
   },
 
-  // Tab Content Wrapper
-  tabSection: {
+  // Tab Content
+  tabContent: {
     gap: 12,
   },
 
   // License Card
   licenseCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    padding: 14,
+    borderRadius: 12,
+    padding: 16,
     borderWidth: 1,
     borderColor: '#E2E8F0',
     gap: 10,
@@ -673,120 +522,83 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
   },
-  licenseHeaderLeft: {
+  licenseMain: {
     flex: 1,
     gap: 3,
   },
-  schemeTag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  schemeTagText: {
-    fontSize: 9,
+  schemeLabel: {
+    fontSize: 10,
     fontWeight: '700',
-    color: '#1E3A8A',
+    color: '#475569',
     textTransform: 'uppercase',
   },
-  licenseNum: {
+  licenseCode: {
     fontSize: 15,
     fontWeight: '800',
     color: '#0F172A',
     fontFamily: 'monospace',
   },
-  productName: {
-    fontSize: 12,
-    color: '#475569',
-    lineHeight: 16,
+  productTitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#1E293B',
+    marginTop: 2,
+    lineHeight: 18,
+  },
+  standardMeta: {
+    fontSize: 11,
+    color: '#64748B',
     marginTop: 2,
   },
-  licenseHeaderRight: {
+  licenseSide: {
     alignItems: 'flex-end',
-    gap: 6,
-  },
-  validityBadge: {
-    backgroundColor: '#ECFDF5',
-    paddingHorizontal: 7,
-    paddingVertical: 3,
-    borderRadius: 6,
-  },
-  validityText: {
-    fontSize: 9,
-    fontWeight: '700',
-    color: '#047857',
-  },
-  tagRow: {
-    flexDirection: 'row',
-    gap: 6,
-    flexWrap: 'wrap',
-  },
-  standardPill: {
-    backgroundColor: '#EEF2FF',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#C7D2FE',
-  },
-  standardPillText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#1E3A8A',
-  },
-  brandPill: {
-    backgroundColor: '#F1F5F9',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-  },
-  brandPillText: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: '#475569',
-  },
-  expandedDetails: {
     gap: 8,
   },
-  detailDivider: {
-    height: 1,
-    backgroundColor: '#F1F5F9',
-    marginVertical: 4,
+  validUntilText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#047857',
   },
-  detailRow: {
+  licenseExpanded: {
+    gap: 8,
+    marginTop: 4,
+  },
+  detailLine: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingVertical: 3,
   },
-  detailLabel: {
+  detailKey: {
     fontSize: 11,
     color: '#64748B',
   },
-  detailValue: {
-    fontSize: 11,
-    fontWeight: '600',
+  detailVal: {
+    fontSize: 12,
     color: '#0F172A',
+    fontWeight: '600',
   },
-  cardActionRow: {
+  actionRow: {
     flexDirection: 'row',
     gap: 8,
-    marginTop: 6,
+    marginTop: 8,
   },
-  primaryActionBtn: {
+  primaryBtn: {
     flex: 1.2,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    backgroundColor: '#1E3A8A',
+    backgroundColor: '#0F172A',
     borderRadius: 8,
-    paddingVertical: 8,
+    paddingVertical: 9,
   },
-  primaryActionText: {
-    fontSize: 11,
+  primaryBtnText: {
+    fontSize: 12,
     fontWeight: '700',
     color: '#FFFFFF',
   },
-  secondaryActionBtn: {
+  secondaryBtn: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
@@ -794,200 +606,124 @@ const styles = StyleSheet.create({
     gap: 4,
     backgroundColor: '#F1F5F9',
     borderRadius: 8,
-    paddingVertical: 8,
+    paddingVertical: 9,
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
-  secondaryActionText: {
-    fontSize: 11,
+  secondaryBtnText: {
+    fontSize: 12,
     fontWeight: '700',
-    color: '#1E3A8A',
+    color: '#0F172A',
   },
 
   // Audit Tab
-  auditAlertCard: {
-    backgroundColor: '#FFFBEB',
-    borderWidth: 1,
-    borderColor: '#FDE68A',
-    borderRadius: 14,
-    padding: 14,
-    gap: 8,
-  },
-  alertHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  alertTitle: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: '#92400E',
-  },
-  alertDesc: {
-    fontSize: 11,
-    color: '#78350F',
-    lineHeight: 16,
-  },
-  alertActionBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
+  auditNotice: {
     backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#FDE68A',
-    borderRadius: 8,
-    paddingVertical: 7,
-    marginTop: 4,
-  },
-  alertActionText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#92400E',
-  },
-  timelineBox: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    padding: 14,
+    borderRadius: 12,
+    padding: 16,
+    gap: 8,
+  },
+  auditNoticeTitle: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  auditNoticeDesc: {
+    fontSize: 12,
+    color: '#475569',
+    lineHeight: 18,
+  },
+  auditNoticeBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 4,
+  },
+  auditNoticeBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0F172A',
+  },
+  lifecycleCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    padding: 16,
     gap: 12,
   },
-  timelineBoxTitle: {
-    fontSize: 13,
+  lifecycleTitle: {
+    fontSize: 14,
     fontWeight: '800',
     color: '#0F172A',
     marginBottom: 4,
   },
-  timelineItem: {
+  lifecycleRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 10,
-    minHeight: 38,
-  },
-  connectorCol: {
     alignItems: 'center',
-    width: 20,
+    gap: 12,
+    paddingVertical: 4,
   },
-  stepDot: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
+  stepNumBox: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     backgroundColor: '#F1F5F9',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#CBD5E1',
+    borderColor: '#E2E8F0',
   },
-  stepDotCompleted: {
-    backgroundColor: '#059669',
-    borderColor: '#059669',
+  stepNumText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#475569',
   },
-  stepDotActive: {
-    backgroundColor: '#FEF3C7',
-    borderColor: '#D97706',
-  },
-  stepLine: {
-    width: 2,
+  stepDetail: {
     flex: 1,
-    minHeight: 18,
-    backgroundColor: '#E2E8F0',
-    marginVertical: 2,
+    gap: 1,
   },
-  stepLineCompleted: {
-    backgroundColor: '#059669',
-  },
-  stepInfo: {
-    flex: 1,
-  },
-  stepTitle: {
+  stepName: {
     fontSize: 12,
-    fontWeight: '600',
-    color: '#334155',
+    fontWeight: '700',
+    color: '#0F172A',
   },
-  stepTitleActive: {
-    fontWeight: '800',
-    color: '#B45309',
-  },
-  stepDate: {
-    fontSize: 10,
-    color: '#94A3B8',
-    marginTop: 1,
-  },
-  upcomingPill: {
-    backgroundColor: '#FEF3C7',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-  },
-  upcomingPillText: {
-    fontSize: 8,
-    fontWeight: '800',
-    color: '#B45309',
+  stepSub: {
+    fontSize: 11,
+    color: '#64748B',
   },
 
   // Officer Tab
   officerCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 14,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    padding: 14,
-    gap: 12,
-  },
-  officerHeader: {
-    flexDirection: 'row',
-    gap: 12,
-    alignItems: 'center',
-  },
-  officerAvatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    backgroundColor: '#EEF2FF',
-    borderWidth: 1,
-    borderColor: '#C7D2FE',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  officerInitials: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: '#1E3A8A',
-  },
-  officerMain: {
-    flex: 1,
+    padding: 16,
+    gap: 6,
   },
   officerName: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '800',
     color: '#0F172A',
   },
-  officerTitle: {
-    fontSize: 11,
+  officerRole: {
+    fontSize: 12,
     fontWeight: '600',
-    color: '#1E3A8A',
+    color: '#475569',
   },
   officerDept: {
-    fontSize: 10,
+    fontSize: 11,
     color: '#64748B',
   },
-  officerInfoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  officerInfoText: {
-    fontSize: 11,
-    color: '#475569',
-    flex: 1,
-  },
-  contactRow: {
+  officerActionRow: {
     flexDirection: 'row',
     gap: 8,
-    marginTop: 4,
+    marginTop: 8,
   },
-  contactBtn: {
+  officerBtn: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
@@ -995,29 +731,25 @@ const styles = StyleSheet.create({
     gap: 6,
     backgroundColor: '#F1F5F9',
     borderRadius: 8,
-    paddingVertical: 8,
+    paddingVertical: 9,
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
-  contactBtnText: {
-    fontSize: 11,
+  officerBtnText: {
+    fontSize: 12,
     fontWeight: '700',
-    color: '#1E3A8A',
+    color: '#0F172A',
   },
-  noticeBox: {
-    flexDirection: 'row',
-    gap: 8,
-    backgroundColor: '#ECFDF5',
+  jurisdictionBox: {
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#A7F3D0',
+    borderColor: '#E2E8F0',
     borderRadius: 12,
-    padding: 12,
-    alignItems: 'flex-start',
+    padding: 14,
   },
-  noticeText: {
+  jurisdictionText: {
     fontSize: 11,
-    color: '#065F46',
-    flex: 1,
+    color: '#64748B',
     lineHeight: 16,
   },
 });
